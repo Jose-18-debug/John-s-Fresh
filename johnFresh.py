@@ -1,8 +1,6 @@
-
 from tkinter import *
 from tkinter import ttk  #Importa componentes de Tkinter con estilos modernos
-#Importa ventanas emergentes para mostrar mensajes, advertencias y errores
-from tkinter import messagebox
+from tkinter import messagebox  #Importa ventanas emergentes para mostrar mensajes, advertencias y errores
 
 #Configuración de los colores para el sistema
 CANELA = "#713F35"
@@ -35,6 +33,11 @@ estilo.theme_use("clam")
 estilo.configure("TNotebook", background=CREMA, borderwidth=0)
 estilo.configure("TNotebook.Tab", background=DURAZNO, foreground=TEXTO, padding=[18, 10], font=("Arial", 10, "bold"))
 estilo.map("TNotebook.Tab", background=[("selected", CANELA)], foreground=[("selected", BLANCO)])
+
+#Configuración del estilo de la tabla
+estilo.configure("Treeview", background=BLANCO, foreground=TEXTO, fieldbackground=BLANCO, rowheight=28, font=("Arial", 10))
+estilo.configure("Treeview.Heading", background=CANELA, foreground=BLANCO, font=("Arial", 10, "bold"))
+estilo.map("Treeview", background=[("selected", DURAZNO)], foreground=[("selected", TEXTO)])
 
 #Título principal
 titulo = Label(raiz, text="JOHN'S FRESH", font=("Arial", 24, "bold"), bg=CREMA, fg=CANELA)
@@ -132,6 +135,70 @@ def limpiarCampos():
     for cuadro in [cuadroNombre, cuadroMarca, cuadroCantidad, cuadroPrecio, cuadroCategoria, cuadroUnidad]:
         cuadro.delete(0, END)
 
+#Diseño de la pestaña Inventario
+tituloInventario = Label(inventario, text="Inventario de productos", font=("Arial", 18, "bold"), bg=CREMA, fg=CANELA)
+tituloInventario.pack(pady=(20, 5))
+
+mensajeInventario = Label(inventario, text="Productos registrados en John’s Fresh", font=("Arial", 11), bg=CREMA, fg=TEXTO)
+mensajeInventario.pack(pady=(0, 12))
+
+#Contenedor de la tabla de inventario
+panelTabla = Frame(inventario, bg=CREMA)
+panelTabla.pack(fill="both", expand=True, padx=15, pady=(0, 15))
+
+#Definición de las columnas de la tabla
+columnas = ("ID", "Nombre", "Marca", "Cantidad", "Precio", "Categoría", "Unidad")
+
+tablaInventario = ttk.Treeview(panelTabla, columns=columnas, show="headings")
+
+#Configuración de los encabezados y las columnas
+tablaInventario.heading("ID", text="ID")
+tablaInventario.heading("Nombre", text="Nombre")
+tablaInventario.heading("Marca", text="Marca")
+tablaInventario.heading("Cantidad", text="Cantidad")
+tablaInventario.heading("Precio", text="Precio")
+tablaInventario.heading("Categoría", text="Categoría")
+tablaInventario.heading("Unidad", text="Unidad")
+
+tablaInventario.column("ID", width=55, minwidth=45, anchor="center")
+tablaInventario.column("Nombre", width=150, minwidth=100)
+tablaInventario.column("Marca", width=110, minwidth=80)
+tablaInventario.column("Cantidad", width=85, minwidth=70, anchor="center")
+tablaInventario.column("Precio", width=100, minwidth=80, anchor="e")
+tablaInventario.column("Categoría", width=120, minwidth=90)
+tablaInventario.column("Unidad", width=90, minwidth=70)
+
+#Barras de desplazamiento de la tabla
+barraVertical = ttk.Scrollbar(panelTabla, orient="vertical", command=tablaInventario.yview)
+barraHorizontal = ttk.Scrollbar(panelTabla, orient="horizontal", command=tablaInventario.xview)
+
+tablaInventario.configure(yscrollcommand=barraVertical.set, xscrollcommand=barraHorizontal.set)
+
+tablaInventario.grid(row=0, column=0, sticky="nsew")
+barraVertical.grid(row=0, column=1, sticky="ns")
+barraHorizontal.grid(row=1, column=0, sticky="ew")
+
+panelTabla.grid_rowconfigure(0, weight=1)
+panelTabla.grid_columnconfigure(0, weight=1)
+
+#Función para actualizar la tabla de inventario
+def actualizarInventario():
+    #Eliminar las filas anteriores de la tabla
+    for fila in tablaInventario.get_children():
+        tablaInventario.delete(fila)
+
+    #Agregar los productos registrados a la tabla
+    for producto in productos:
+        tablaInventario.insert("", END, values=(
+            producto["ID"],
+            producto["Nombre"],
+            producto["Marca"],
+            f'{producto["Cantidad"]:g}',
+            f'${producto["Precio"]:,.2f}',
+            producto["Categoría"],
+            producto["Unidad"]
+        ))
+
 #Función para registrar un producto
 def registrarProducto():
     global siguienteID
@@ -184,6 +251,9 @@ def registrarProducto():
     #Actualizar el siguiente ID disponible
     siguienteID += 1
 
+    #Actualizar la tabla de inventario
+    actualizarInventario()
+
     #Mostrar el ID asignado
     cuadroID.config(state="normal")
     cuadroID.delete(0, END)
@@ -203,13 +273,6 @@ botonRegistrar.pack(side="left", padx=5)
 
 botonLimpiar = Button(panelBotones, text="Limpiar campos", command=limpiarCampos, bg=DURAZNO, fg=TEXTO, activebackground=TERRACOTA, activeforeground=BLANCO, font=("Arial", 10, "bold"), relief="flat", cursor="hand2", padx=12, pady=8)
 botonLimpiar.pack(side="left", padx=5)
-
-#Diseño de la pestaña Inventario
-tituloInventario = Label(inventario, text="Inventario de productos", font=("Arial", 18, "bold"), bg=CREMA, fg=CANELA)
-tituloInventario.pack(pady=30)
-
-mensajeInventario = Label(inventario, text="Aquí se mostrará la tabla de productos registrados.", font=("Arial", 11), bg=CREMA, fg=TEXTO)
-mensajeInventario.pack(pady=10)
 
 #Diseño de la pestaña Ventas
 tituloVentas = Label(ventas, text="Registro de ventas", font=("Arial", 18, "bold"), bg=CREMA, fg=CANELA)
