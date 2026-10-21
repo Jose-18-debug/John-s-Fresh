@@ -11,7 +11,10 @@ raiz.config(bd = 20, relief = "sunken", cursor = "hand2")
 miFrame = Frame()
 miFrame.pack(fill = "x")
 miFrame.config(bg = "red")
-miFrame.config(width = "650", height = "350", bd = 35,
-               relief = "sunken", cursor = "pirate")
+miFrame.config(width = "650", height = "100", bd = 35,
+               cursor = "pirate")
+
+miLabel = Label(miFrame, text = "|¡Bienvenidos a la Abarrotería de John!|", fg = "red", font = ("Comic Sans MS", 15))
+miLabel.pack()
 
 raiz.mainloop()
