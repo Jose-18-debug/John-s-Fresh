@@ -14,7 +14,9 @@ BLANCO = "#FFF9F2"
 TEXTO = "#49312B"
 BORDE = "#D3A18A"
 DURAZNO_CLARO = "#F0D9C5"
-FONDO = "#DCE4D5"
+FONDO = "#D7B58D"  # Fondo exterior: otoño más intenso
+CONTENIDO = "#F4E7D0"  # Interior de las pestañas: tono más claro
+FONDO_TICKET = "#E5BD91"  # Ventana del ticket: durazno otoñal
 ROJO = "#A64035"
 
 #Listas temporales para los productos y la venta actual
@@ -97,21 +99,21 @@ estilo.map("Treeview", background=[("selected", TERRACOTA)],
 
 #Encabezado principal
 titulo = Label(raiz, text="John's Fresh", font=("Arial", 24, "bold"),
-    bg=FONDO, fg=CANELA)
+    bg=CONTENIDO, fg=CANELA)
 titulo.pack(pady=(10, 0))
 
 subtitulo = Label(raiz, text="Sistema de punto de venta e inventario",
-    font=("Arial", 10), bg=FONDO, fg=TEXTO)
+    font=("Arial", 10), bg=CONTENIDO, fg=TEXTO)
 subtitulo.pack(pady=(0, 10))
 
 #Creación de las pestañas principales
 pestania = ttk.Notebook(raiz)
 pestania.pack(fill="both", expand=True, padx=15, pady=(0, 10))
 
-inicio = Frame(pestania, bg=FONDO)
-inventario = Frame(pestania, bg=FONDO)
-ventas = Frame(pestania, bg=FONDO)
-clientes = Frame(pestania, bg=FONDO)
+inicio = Frame(pestania, bg=CONTENIDO)
+inventario = Frame(pestania, bg=CONTENIDO)
+ventas = Frame(pestania, bg=CONTENIDO)
+clientes = Frame(pestania, bg=CONTENIDO)
 
 pestania.add(inicio, text="Inicio")
 pestania.add(inventario, text="Inventario")
@@ -120,7 +122,7 @@ pestania.add(clientes, text="Clientes")
 
 #PESTAÑA INICIO
 #Panel del logo
-panelLogo = Frame(inicio, bg=FONDO)
+panelLogo = Frame(inicio, bg=CONTENIDO)
 panelLogo.pack(side="left", fill="both", expand=True, padx=(15, 8), pady=10)
 
 #Panel del formulario
@@ -131,11 +133,11 @@ panelFormulario.pack(side="right", fill="both", expand=True, padx=(8, 15), pady=
 try:
     logo = PhotoImage(file="Logo_JF_grande.png")
     logo = logo.subsample(3, 3)
-    etiquetaLogo = Label(panelLogo, image=logo, bg=FONDO, bd=0)
+    etiquetaLogo = Label(panelLogo, image=logo, bg=CONTENIDO, bd=0)
     etiquetaLogo.pack(expand=True)
 except (TclError, RuntimeError):
     etiquetaLogo = Label(panelLogo, text="John's Fresh",
-        font=("Arial", 27, "bold"), bg=FONDO, fg=CANELA)
+        font=("Arial", 27, "bold"), bg=CONTENIDO, fg=CANELA)
     etiquetaLogo.pack(expand=True)
 
 #Título del formulario
@@ -191,16 +193,16 @@ cuadroUnidad.pack(fill="x", padx=25, ipady=3)
 
 #PESTAÑA INVENTARIO
 tituloInventario = Label(inventario, text="Inventario de productos",
-    font=("Arial", 18, "bold"), bg=FONDO, fg=CANELA)
+    font=("Arial", 18, "bold"), bg=CONTENIDO, fg=CANELA)
 tituloInventario.pack(pady=(15, 4))
 
 mensajeInventario = Label(inventario,
     text="Selecciona un producto para consultarlo, editarlo o eliminarlo",
-    font=("Arial", 10), bg=FONDO, fg=TEXTO)
+    font=("Arial", 10), bg=CONTENIDO, fg=TEXTO)
 mensajeInventario.pack(pady=(0, 8))
 
 #Panel de la tabla
-panelTabla = Frame(inventario, bg=FONDO)
+panelTabla = Frame(inventario, bg=CONTENIDO)
 panelTabla.pack(fill="both", expand=True, padx=15, pady=(0, 6))
 
 columnas = ("ID", "Nombre", "Marca", "Cantidad", "Precio", "Categoría", "Unidad")
@@ -236,12 +238,12 @@ panelTabla.grid_columnconfigure(0, weight=1)
 
 #PESTAÑA VENTAS
 tituloVentas = Label(ventas, text="Punto de venta",
-    font=("Arial", 18, "bold"), bg=FONDO, fg=CANELA)
+    font=("Arial", 18, "bold"), bg=CONTENIDO, fg=CANELA)
 tituloVentas.pack(pady=(8, 2))
 
 mensajeVentas = Label(ventas,
     text="Selecciona un producto, indica la cantidad y agrégalo a la venta.",
-    font=("Arial", 9), bg=FONDO, fg=TEXTO)
+    font=("Arial", 9), bg=CONTENIDO, fg=TEXTO)
 mensajeVentas.pack(pady=(0, 6))
 
 #Panel para seleccionar productos
@@ -268,10 +270,10 @@ panelSeleccionVenta.grid_columnconfigure(0, weight=1)
 
 #Panel de productos de la venta
 tituloCarrito = Label(ventas, text="Productos de la venta actual",
-    font=("Arial", 12, "bold"), bg=FONDO, fg=CANELA)
+    font=("Arial", 12, "bold"), bg=CONTENIDO, fg=CANELA)
 tituloCarrito.pack(pady=(0, 3))
 
-panelCarrito = Frame(ventas, bg=FONDO)
+panelCarrito = Frame(ventas, bg=CONTENIDO)
 panelCarrito.pack(fill="both", expand=True, padx=12, pady=(0, 3))
 
 columnasVenta = ("ID", "Nombre", "Cantidad", "Precio unitario", "Importe")
@@ -297,7 +299,7 @@ panelCarrito.grid_rowconfigure(0, weight=1)
 panelCarrito.grid_columnconfigure(0, weight=1)
 
 #Panel de botones de venta
-panelBotonesVenta = Frame(ventas, bg=FONDO)
+panelBotonesVenta = Frame(ventas, bg=CONTENIDO)
 panelBotonesVenta.pack(fill="x", padx=12, pady=(0, 4))
 
 #Panel de totales
@@ -777,8 +779,10 @@ def generarTextoTicket(folio, fecha, articulos, subtotal, iva,
 
     return "\n".join(lineas)
 
+
+
 #Guardar el ticket como archivo de texto
-def guardarTicket(textoTicket, folio):
+def guardarTicket(textoTicket, folio, ventanaTicket):
     ruta = filedialog.asksaveasfilename(
         parent=ventanaTicket,
         title="Guardar ticket de venta",
@@ -799,6 +803,7 @@ def guardarTicket(textoTicket, folio):
             f"El ticket se guardó correctamente en:\n{ruta}",
             parent=ventanaTicket
         )
+
     except OSError as error:
         messagebox.showerror(
             "Error al guardar",
@@ -806,100 +811,176 @@ def guardarTicket(textoTicket, folio):
             parent=ventanaTicket
         )
 
-#Mostrar el ticket en una ventana independiente
+
+
+#Mostrar la ventana del ticket de venta
 def mostrarTicket(textoTicket, folio):
-    global ventanaTicket
-
+    #Crear la ventana del ticket
     ventanaTicket = Toplevel(raiz)
-    ventanaTicket.title(f"Ticket de venta - Folio {folio:04d}")
-    ventanaTicket.geometry("460x650")
-    ventanaTicket.minsize(400, 500)
-    ventanaTicket.configure(bg=FONDO)
-    ventanaTicket.transient(raiz)
+    ventanaTicket.title(f"Ticket de venta #{folio}")
+    ventanaTicket.geometry("480x680+400+20")
+    ventanaTicket.minsize(450, 620)
+    ventanaTicket.configure(bg=FONDO_TICKET)
 
+    #Colocar el icono de la ventana
     try:
         ventanaTicket.iconbitmap("Logo_JF_pequenio.ico")
     except TclError:
         pass
 
+    #Panel superior
+    panelSuperior = Frame(ventanaTicket, bg=FONDO_TICKET)
+    panelSuperior.pack(fill="x", pady=(8, 3))
+
+    #Cargar el logo en tamaño pequeño
+    try:
+        logoTicket = PhotoImage(file="Logo_JF_grande.png")
+        logoTicket = logoTicket.subsample(9, 9)
+
+        etiquetaLogoTicket = Label(
+            panelSuperior,
+            image=logoTicket,
+            bg=FONDO_TICKET,
+            bd=0
+        )
+        etiquetaLogoTicket.pack()
+
+        #Conservar la referencia de la imagen
+        ventanaTicket.logoTicket = logoTicket
+
+    except (TclError, RuntimeError):
+        etiquetaLogoTicket = Label(
+            panelSuperior,
+            text="John's Fresh",
+            font=("Arial", 18, "bold"),
+            bg=FONDO_TICKET,
+            fg=CANELA
+        )
+        etiquetaLogoTicket.pack()
+
+    #Título de confirmación
     tituloTicket = Label(
-        ventanaTicket,
-        text="Venta finalizada correctamente",
-        font=("Arial", 14, "bold"),
-        bg=FONDO,
+        panelSuperior,
+        text="¡Venta finalizada correctamente!",
+        font=("Arial", 12, "bold"),
+        bg=FONDO_TICKET,
         fg=CANELA
     )
-    tituloTicket.pack(pady=(12, 6))
+    tituloTicket.pack(pady=(4, 2))
 
+    #Número del ticket
     mensajeTicket = Label(
-        ventanaTicket,
-        text="Puedes revisar el ticket y guardarlo como archivo de texto.",
-        font=("Arial", 9),
-        bg=FONDO,
-        fg=TEXTO,
-        wraplength=420
+        panelSuperior,
+        text=f"Ticket de venta #{folio}",
+        font=("Arial", 10),
+        bg=FONDO_TICKET,
+        fg=TEXTO
     )
-    mensajeTicket.pack(pady=(0, 8))
+    mensajeTicket.pack(pady=(0, 5))
 
-    panelTextoTicket = Frame(ventanaTicket, bg=BLANCO)
-    panelTextoTicket.pack(fill="both", expand=True, padx=15, pady=5)
+    #Panel del contenido del ticket
+    panelContenido = Frame(
+        ventanaTicket,
+        bg=BLANCO,
+        bd=1,
+        relief="solid"
+    )
+    panelContenido.pack(
+        fill="both",
+        expand=True,
+        padx=15,
+        pady=(3, 8)
+    )
 
-    barraTicket = ttk.Scrollbar(panelTextoTicket, orient="vertical")
-    textoTicketUI = Text(
-        panelTextoTicket,
-        wrap="none",
-        font=("Courier New", 10),
+    #Barra de desplazamiento vertical
+    scrollTicket = Scrollbar(
+        panelContenido,
+        orient=VERTICAL
+    )
+    scrollTicket.pack(side=RIGHT, fill=Y)
+
+    #Área de texto del ticket
+    areaTicket = Text(
+        panelContenido,
+        font=("Courier New", 9),
         bg=BLANCO,
         fg=TEXTO,
-        relief="flat",
+        wrap="word",
         padx=10,
-        pady=10,
-        width=46,
-        height=25
+        pady=8,
+        bd=0,
+        yscrollcommand=scrollTicket.set
+    )
+    areaTicket.pack(
+        side=LEFT,
+        fill="both",
+        expand=True
     )
 
-    barraTicket.config(command=textoTicketUI.yview)
-    textoTicketUI.configure(yscrollcommand=barraTicket.set)
+    scrollTicket.config(command=areaTicket.yview)
 
-    textoTicketUI.pack(side="left", fill="both", expand=True)
-    barraTicket.pack(side="right", fill="y")
+    #Insertar el contenido del ticket
+    areaTicket.insert(END, textoTicket)
 
-    textoTicketUI.insert("1.0", textoTicket)
-    textoTicketUI.configure(state="disabled")
+    #Bloquear la edición del texto
+    areaTicket.config(state=DISABLED)
 
-    panelBotonesTicket = Frame(ventanaTicket, bg=FONDO)
-    panelBotonesTicket.pack(fill="x", padx=15, pady=(6, 12))
+    #Panel inferior para los botones
+    #Se mantiene separado del área de texto
+    panelBotones = Frame(
+        ventanaTicket,
+        bg=FONDO_TICKET
+    )
+    panelBotones.pack(
+        side=BOTTOM,
+        fill="x",
+        pady=(0, 12)
+    )
 
+    #Botón para guardar el ticket
     botonGuardarTicket = Button(
-        panelBotonesTicket,
-        text="Guardar ticket",
-        command=lambda: guardarTicket(textoTicket, folio),
+        panelBotones,
+        text="Guardar ticket .txt",
         font=("Arial", 10, "bold"),
         bg=CANELA,
         fg=BLANCO,
         activebackground=TERRACOTA,
         activeforeground=BLANCO,
         relief="flat",
-        cursor="hand2"
+        cursor="hand2",
+        padx=12,
+        pady=7,
+        command=lambda: guardarTicket(
+            textoTicket,
+            folio,
+            ventanaTicket
+        )
     )
-    botonGuardarTicket.pack(side="left", expand=True, fill="x",
-                            padx=(0, 5), ipady=5)
+    botonGuardarTicket.pack(side=LEFT, padx=(15, 6))
 
+    #Botón para cerrar la ventana
     botonCerrarTicket = Button(
-        panelBotonesTicket,
+        panelBotones,
         text="Cerrar",
-        command=ventanaTicket.destroy,
         font=("Arial", 10, "bold"),
         bg=DURAZNO,
         fg=TEXTO,
         activebackground=DURAZNO_CLARO,
+        activeforeground=TEXTO,
         relief="flat",
-        cursor="hand2"
+        cursor="hand2",
+        padx=18,
+        pady=7,
+        command=ventanaTicket.destroy
     )
-    botonCerrarTicket.pack(side="left", expand=True, fill="x",
-                           padx=(5, 0), ipady=5)
+    botonCerrarTicket.pack(side=RIGHT, padx=(6, 15))
 
+    #Mantener la ventana al frente
+    ventanaTicket.transient(raiz)
     ventanaTicket.grab_set()
+
+
+
 
 #Finalizar la venta, generar el ticket y descontar existencias
 def finalizarVenta():
