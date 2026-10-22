@@ -15,11 +15,50 @@ DURAZNO_CLARO = "#F0D9C5"
 FONDO = "#DCE4D5"
 ROJO = "#A64035"
 
-#Lista temporal para guardar los productos y la venta actual
-productos = []
-siguienteID = 1
+#Listas temporales para los productos y la venta actual
+productos = [
+    {"ID": 1, "Nombre": "Arroz", "Marca": "Verde Valle", "Cantidad": 25, "Precio": 32.00, "Categoría": "Granos y Semillas", "Unidad": "Kilogramos"},
+    {"ID": 2, "Nombre": "Frijol negro", "Marca": "Verde Valle", "Cantidad": 20, "Precio": 38.00, "Categoría": "Granos y Semillas", "Unidad": "Kilogramos"},
+    {"ID": 3, "Nombre": "Azúcar", "Marca": "Zulka", "Cantidad": 15, "Precio": 30.00, "Categoría": "Abarrotes", "Unidad": "Kilogramos"},
+    {"ID": 4, "Nombre": "Sal", "Marca": "La Fina", "Cantidad": 20, "Precio": 18.00, "Categoría": "Condimentos y Especias", "Unidad": "Kilogramos"},
+    {"ID": 5, "Nombre": "Aceite vegetal", "Marca": "Nutrioli", "Cantidad": 18, "Precio": 42.00, "Categoría": "Abarrotes", "Unidad": "Botellas"},
+    {"ID": 6, "Nombre": "Leche entera", "Marca": "Lala", "Cantidad": 24, "Precio": 29.00, "Categoría": "Lácteos", "Unidad": "Litros"},
+    {"ID": 7, "Nombre": "Yogur", "Marca": "Danone", "Cantidad": 15, "Precio": 18.00, "Categoría": "Lácteos", "Unidad": "Piezas"},
+    {"ID": 8, "Nombre": "Queso panela", "Marca": "Lala", "Cantidad": 10, "Precio": 45.00, "Categoría": "Lácteos", "Unidad": "Piezas"},
+    {"ID": 9, "Nombre": "Huevo", "Marca": "Granja local", "Cantidad": 12, "Precio": 48.00, "Categoría": "Abarrotes", "Unidad": "Docenas"},
+    {"ID": 10, "Nombre": "Manzana", "Marca": "A granel", "Cantidad": 15, "Precio": 42.00, "Categoría": "Frutas", "Unidad": "Kilogramos"},
+    {"ID": 11, "Nombre": "Plátano", "Marca": "A granel", "Cantidad": 18, "Precio": 28.00, "Categoría": "Frutas", "Unidad": "Kilogramos"},
+    {"ID": 12, "Nombre": "Naranja", "Marca": "A granel", "Cantidad": 20, "Precio": 25.00, "Categoría": "Frutas", "Unidad": "Kilogramos"},
+    {"ID": 13, "Nombre": "Jitomate", "Marca": "A granel", "Cantidad": 15, "Precio": 32.00, "Categoría": "Verduras", "Unidad": "Kilogramos"},
+    {"ID": 14, "Nombre": "Papa", "Marca": "A granel", "Cantidad": 20, "Precio": 28.00, "Categoría": "Verduras", "Unidad": "Kilogramos"},
+    {"ID": 15, "Nombre": "Cebolla", "Marca": "A granel", "Cantidad": 12, "Precio": 30.00, "Categoría": "Verduras", "Unidad": "Kilogramos"},
+    {"ID": 16, "Nombre": "Atún en lata", "Marca": "Dolores", "Cantidad": 30, "Precio": 22.00, "Categoría": "Enlatados", "Unidad": "Latas"},
+    {"ID": 17, "Nombre": "Chiles enlatados", "Marca": "La Costeña", "Cantidad": 18, "Precio": 19.00, "Categoría": "Enlatados", "Unidad": "Latas"},
+    {"ID": 18, "Nombre": "Refresco", "Marca": "Coca-Cola", "Cantidad": 24, "Precio": 20.00, "Categoría": "Bebidas", "Unidad": "Botellas"},
+    {"ID": 19, "Nombre": "Agua natural", "Marca": "Bonafont", "Cantidad": 30, "Precio": 12.00, "Categoría": "Bebidas", "Unidad": "Botellas"},
+    {"ID": 20, "Nombre": "Papas fritas", "Marca": "Sabritas", "Cantidad": 25, "Precio": 18.00, "Categoría": "Botanas y Dulces", "Unidad": "Piezas"},
+    {"ID": 21, "Nombre": "Galletas", "Marca": "Gamesa", "Cantidad": 20, "Precio": 17.00, "Categoría": "Botanas y Dulces", "Unidad": "Paquetes"},
+    {"ID": 22, "Nombre": "Detergente", "Marca": "Ariel", "Cantidad": 12, "Precio": 38.00, "Categoría": "Productos de Limpieza", "Unidad": "Paquetes"},
+    {"ID": 23, "Nombre": "Jabón de baño", "Marca": "Zest", "Cantidad": 20, "Precio": 16.00, "Categoría": "Higiene Personal", "Unidad": "Piezas"},
+    {"ID": 24, "Nombre": "Esponja para trastes", "Marca": "Scotch-Brite", "Cantidad": 15, "Precio": 15.00, "Categoría": "Productos de Cocina", "Unidad": "Piezas"}
+]
+siguienteID = 25
 productoSeleccionadoID = None
 carritoVentas = {}
+
+#Opciones para las listas desplegables
+categorias = [
+    "Verduras", "Frutas", "Granos y Semillas", "Lácteos",
+    "Bebidas", "Botanas y Dulces", "Productos de Limpieza",
+    "Productos de Cocina", "Carnes y Embutidos", "Abarrotes",
+    "Enlatados", "Condimentos y Especias", "Higiene Personal",
+    "Congelados", "Otros"
+]
+unidades = [
+    "Piezas", "Kilogramos", "Gramos", "Litros",
+    "Paquetes", "Cajas", "Botellas", "Latas",
+    "Docenas", "Rollos"
+]
 
 #Configuración de la ventana principal
 raiz = Tk()
@@ -126,12 +165,16 @@ crearEtiqueta("Precio")
 cuadroPrecio = crearCampo()
 cuadroPrecio.pack(fill="x", padx=25, ipady=3)
 
+#Lista desplegable de categorías
 crearEtiqueta("Categoría")
-cuadroCategoria = crearCampo()
+cuadroCategoria = ttk.Combobox(panelFormulario, values=categorias,
+    state="readonly", font=("Arial", 10))
 cuadroCategoria.pack(fill="x", padx=25, ipady=3)
 
+#Lista desplegable de unidades de medida
 crearEtiqueta("Unidad de medida")
-cuadroUnidad = crearCampo()
+cuadroUnidad = ttk.Combobox(panelFormulario, values=unidades,
+    state="readonly", font=("Arial", 10))
 cuadroUnidad.pack(fill="x", padx=25, ipady=3)
 
 #PESTAÑA INVENTARIO
@@ -151,7 +194,7 @@ tablaInventario.tag_configure("fila_clara", background=BLANCO, foreground=TEXTO)
 tablaInventario.tag_configure("fila_otoñal", background=DURAZNO_CLARO, foreground=TEXTO)
 
 anchos = {"ID": 55, "Nombre": 150, "Marca": 110, "Cantidad": 85,
-    "Precio": 90, "Categoría": 120, "Unidad": 100}
+    "Precio": 90, "Categoría": 150, "Unidad": 100}
 
 for columna in columnas:
     tablaInventario.heading(columna, text=columna)
@@ -233,9 +276,10 @@ etiquetaTotal.pack(anchor="e", padx=15, pady=(2, 8))
 def actualizarSelectorVentas():
     opciones = []
     for producto in productos:
-        opciones.append(
-            f'{producto["ID"]} - {producto["Nombre"]} | Existencia: {producto["Cantidad"]:g} | ${producto["Precio"]:,.2f}'
-        )
+        if producto["Cantidad"] > 0:
+            opciones.append(
+                f'{producto["ID"]} - {producto["Nombre"]} | Existencia: {producto["Cantidad"]:g} | ${producto["Precio"]:,.2f}'
+            )
     comboProducto["values"] = opciones
 
     if comboProducto.get() not in opciones:
@@ -284,10 +328,8 @@ def seleccionarProducto(event=None):
             cuadroCantidad.insert(0, f'{producto["Cantidad"]:g}')
             cuadroPrecio.delete(0, END)
             cuadroPrecio.insert(0, f'{producto["Precio"]:g}')
-            cuadroCategoria.delete(0, END)
-            cuadroCategoria.insert(0, producto["Categoría"])
-            cuadroUnidad.delete(0, END)
-            cuadroUnidad.insert(0, producto["Unidad"])
+            cuadroCategoria.set(producto["Categoría"])
+            cuadroUnidad.set(producto["Unidad"])
             break
 
 tablaInventario.bind("<<TreeviewSelect>>", seleccionarProducto)
@@ -301,8 +343,11 @@ def limpiarCampos():
     cuadroID.delete(0, END)
     cuadroID.configure(state="readonly")
 
-    for campo in (cuadroNombre, cuadroMarca, cuadroCantidad, cuadroPrecio, cuadroCategoria, cuadroUnidad):
+    for campo in (cuadroNombre, cuadroMarca, cuadroCantidad, cuadroPrecio):
         campo.delete(0, END)
+
+    cuadroCategoria.set("")
+    cuadroUnidad.set("")
 
     seleccion = tablaInventario.selection()
     if seleccion:
@@ -317,8 +362,9 @@ def obtenerDatosFormulario():
     categoria = cuadroCategoria.get().strip()
     unidad = cuadroUnidad.get().strip()
 
-    if not nombre or not cantidadTexto or not precioTexto or not unidad:
-        messagebox.showwarning("Campos obligatorios", "Completa el nombre, la cantidad, el precio y la unidad.")
+    if not nombre or not cantidadTexto or not precioTexto or not categoria or not unidad:
+        messagebox.showwarning("Campos obligatorios",
+            "Completa el nombre, la cantidad, el precio, la categoría y la unidad.")
         return None
 
     try:
@@ -601,6 +647,9 @@ tituloClientes.pack(pady=(40, 10))
 mensajeClientes = Label(clientes, text="Aquí construiremos el registro y la gestión de clientes.",
     font=("Arial", 11), bg=FONDO, fg=TEXTO)
 mensajeClientes.pack(pady=5)
+
+#Cargar los productos iniciales en el inventario y en el selector de ventas
+actualizarInventario()
 
 #Inicio del programa
 raiz.mainloop()
