@@ -51,6 +51,11 @@ siguienteID = len(productos) + 1
 productoSeleccionadoID = None
 carritoVentas = {}
 
+#Lista temporal de clientes (sin base de datos)
+clientesRegistrados = []
+siguienteIDCliente = 1
+clienteSeleccionadoID = None
+
 #Control del folio de los tickets durante la sesión
 siguienteFolio = 1
 
@@ -1185,6 +1190,132 @@ botonFinalizarVenta = Button(panelBotonesVenta, text="Finalizar venta",
     activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonFinalizarVenta.pack(side="right", padx=8, ipady=4, ipadx=8)
 
+#FUNCIONES DEL MODULO CLIENTES
+#Limpiar los campos del formulario y quitar la selección actual
+def limpiarCamposCliente():
+    global clienteSeleccionadoID
+    clienteSeleccionadoID = None
+    cuadroIDCliente.config(state="normal")
+    cuadroIDCliente.delete(0, END)
+    cuadroIDCliente.config(state="readonly")
+    cuadroNombreCliente.delete(0, END)
+    cuadroTelefonoCliente.delete(0, END)
+    cuadroCorreoCliente.delete(0, END)
+    cuadroDireccionCliente.delete(0, END)
+    if tablaClientes.selection():
+        tablaClientes.selection_remove(tablaClientes.selection())
+    botonRegistrarCliente.config(state="normal")
+    botonGuardarCambiosCliente.config(state="disabled")
+
+#Actualizar la tabla con los clientes registrados
+def actualizarTablaClientes():
+    for fila in tablaClientes.get_children():
+        tablaClientes.delete(fila)
+    for indice, cliente in enumerate(clientesRegistrados):
+        etiqueta = "cliente_claro" if indice % 2 == 0 else "cliente_otonial"
+        tablaClientes.insert("", END, values=(
+            cliente["ID"], cliente["Nombre"], cliente["Telefono"],
+            cliente["Correo"], cliente["Direccion"]
+        ), tags=(etiqueta,))
+
+#Registrar un cliente nuevo
+def registrarCliente():
+    global siguienteIDCliente
+    nombre = cuadroNombreCliente.get().strip()
+    telefono = cuadroTelefonoCliente.get().strip()
+    correo = cuadroCorreoCliente.get().strip()
+    direccion = cuadroDireccionCliente.get().strip()
+
+    if not nombre:
+        messagebox.showwarning("Dato obligatorio", "Escribe el nombre completo del cliente.", parent=raiz)
+        cuadroNombreCliente.focus_set()
+        return
+    if telefono and not telefono.replace(" ", "").replace("-", "").replace("+", "").isdigit():
+        messagebox.showwarning("Teléfono no válido", "Revisa el teléfono. Utiliza números y, si lo necesitas, espacios, guiones o el signo +.", parent=raiz)
+        cuadroTelefonoCliente.focus_set()
+        return
+    if correo and ("@" not in correo or "." not in correo.split("@")[-1]):
+        messagebox.showwarning("Correo no válido", "Escribe un correo válido o deja el campo vacío.", parent=raiz)
+        cuadroCorreoCliente.focus_set()
+        return
+
+    cliente = {"ID": siguienteIDCliente, "Nombre": nombre, "Telefono": telefono,
+               "Correo": correo, "Direccion": direccion}
+    clientesRegistrados.append(cliente)
+    siguienteIDCliente += 1
+    actualizarTablaClientes()
+    limpiarCamposCliente()
+    messagebox.showinfo("Cliente registrado", f"Se registró correctamente a {nombre}.", parent=raiz)
+
+#Cargar en el formulario los datos de la fila seleccionada
+def seleccionarCliente(event=None):
+    global clienteSeleccionadoID
+    seleccion = tablaClientes.selection()
+    if not seleccion:
+        return
+    valores = tablaClientes.item(seleccion[0], "values")
+    clienteSeleccionadoID = int(valores[0])
+    cuadroIDCliente.config(state="normal")
+    cuadroIDCliente.delete(0, END)
+    cuadroIDCliente.insert(0, str(clienteSeleccionadoID))
+    cuadroIDCliente.config(state="readonly")
+    for cuadro, valor in ((cuadroNombreCliente, valores[1]),
+                          (cuadroTelefonoCliente, valores[2]),
+                          (cuadroCorreoCliente, valores[3]),
+                          (cuadroDireccionCliente, valores[4])):
+        cuadro.delete(0, END)
+        cuadro.insert(0, valor)
+    botonRegistrarCliente.config(state="disabled")
+    botonGuardarCambiosCliente.config(state="normal")
+
+#Guardar los cambios del cliente seleccionado
+def guardarCambiosCliente():
+    global clienteSeleccionadoID
+    if clienteSeleccionadoID is None:
+        messagebox.showwarning("Selecciona un cliente", "Selecciona un cliente de la tabla para modificar sus datos.", parent=raiz)
+        return
+    nombre = cuadroNombreCliente.get().strip()
+    telefono = cuadroTelefonoCliente.get().strip()
+    correo = cuadroCorreoCliente.get().strip()
+    direccion = cuadroDireccionCliente.get().strip()
+    if not nombre:
+        messagebox.showwarning("Dato obligatorio", "El nombre completo no puede quedar vacío.", parent=raiz)
+        cuadroNombreCliente.focus_set()
+        return
+    if telefono and not telefono.replace(" ", "").replace("-", "").replace("+", "").isdigit():
+        messagebox.showwarning("Teléfono no válido", "Revisa el formato del teléfono.", parent=raiz)
+        cuadroTelefonoCliente.focus_set()
+        return
+    if correo and ("@" not in correo or "." not in correo.split("@")[-1]):
+        messagebox.showwarning("Correo no válido", "Escribe un correo válido o deja el campo vacío.", parent=raiz)
+        cuadroCorreoCliente.focus_set()
+        return
+    for cliente in clientesRegistrados:
+        if cliente["ID"] == clienteSeleccionadoID:
+            cliente.update({"Nombre": nombre, "Telefono": telefono,
+                            "Correo": correo, "Direccion": direccion})
+            break
+    actualizarTablaClientes()
+    limpiarCamposCliente()
+    messagebox.showinfo("Cambios guardados", "Los datos del cliente se actualizaron correctamente.", parent=raiz)
+
+#Eliminar el cliente seleccionado
+def eliminarCliente():
+    global clienteSeleccionadoID
+    if clienteSeleccionadoID is None:
+        messagebox.showwarning("Selecciona un cliente", "Selecciona en la tabla el cliente que deseas eliminar.", parent=raiz)
+        return
+    cliente = next((c for c in clientesRegistrados if c["ID"] == clienteSeleccionadoID), None)
+    if cliente is None:
+        return
+    confirmar = messagebox.askyesno("Confirmar eliminación", f"¿Seguro que deseas eliminar a {cliente['Nombre']}?", parent=raiz)
+    if not confirmar:
+        return
+    clientesRegistrados.remove(cliente)
+    actualizarTablaClientes()
+    limpiarCamposCliente()
+    messagebox.showinfo("Cliente eliminado", "El cliente se eliminó correctamente.", parent=raiz)
+
 #PESTAÑA CLIENTES
 #Encabezado del módulo de clientes
 tituloClientes = Label(clientes, text="Gestión de clientes",
@@ -1255,6 +1386,34 @@ cuadroDireccionCliente.grid(row=4, column=2, columnspan=2,
 for columnaCliente in range(4):
     panelFormularioClientes.grid_columnconfigure(columnaCliente, weight=1)
 
+#Barra de botones del formulario: se mantiene separada de la tabla
+panelBotonesClientes = Frame(clientes, bg=FONDO)
+panelBotonesClientes.pack(fill="x", padx=15, pady=(0, 10))
+
+botonRegistrarCliente = Button(panelBotonesClientes, text="Registrar cliente",
+    command=registrarCliente, font=("Arial", 10, "bold"),
+    bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
+    activeforeground=BLANCO, relief="flat", cursor="hand2")
+botonRegistrarCliente.pack(side="left", padx=(0, 8), ipady=5, ipadx=10)
+
+botonGuardarCambiosCliente = Button(panelBotonesClientes, text="Guardar cambios",
+    command=guardarCambiosCliente, font=("Arial", 10, "bold"),
+    bg=TERRACOTA, fg=BLANCO, activebackground=CANELA,
+    activeforeground=BLANCO, relief="flat", cursor="hand2", state="disabled")
+botonGuardarCambiosCliente.pack(side="left", padx=8, ipady=5, ipadx=10)
+
+botonEliminarCliente = Button(panelBotonesClientes, text="Eliminar cliente",
+    command=eliminarCliente, font=("Arial", 10, "bold"),
+    bg=ROJO, fg=BLANCO, activebackground="#82332B",
+    activeforeground=BLANCO, relief="flat", cursor="hand2")
+botonEliminarCliente.pack(side="left", padx=8, ipady=5, ipadx=10)
+
+botonLimpiarCliente = Button(panelBotonesClientes, text="Limpiar campos",
+    command=limpiarCamposCliente, font=("Arial", 10, "bold"),
+    bg=DURAZNO, fg=TEXTO, activebackground=DURAZNO_CLARO,
+    activeforeground=TEXTO, relief="flat", cursor="hand2")
+botonLimpiarCliente.pack(side="right", padx=(8, 0), ipady=5, ipadx=10)
+
 #Panel de la tabla de clientes
 tituloTablaClientes = Label(clientes, text="Clientes registrados",
     font=("Arial", 13, "bold"), bg=FONDO, fg=CANELA)
@@ -1297,8 +1456,11 @@ barraHorizontalClientes.grid(row=1, column=0, sticky="ew")
 panelTablaClientes.grid_rowconfigure(0, weight=1)
 panelTablaClientes.grid_columnconfigure(0, weight=1)
 
-#En este primer paso se prepara la interfaz; las acciones de los botones
-#y el registro real de clientes se programarán en el siguiente paso.
+#Enlazar la selección de clientes con el formulario
+tablaClientes.bind("<<TreeviewSelect>>", seleccionarCliente)
+
+#Los clientes se guardan temporalmente en una lista de Python.
+#Al cerrar el programa, estos registros se reinician porque no usamos base de datos.
 
 #Cargar los productos iniciales en el inventario y en el selector de ventas
 actualizarInventario()
