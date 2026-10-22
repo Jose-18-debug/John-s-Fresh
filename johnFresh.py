@@ -1186,14 +1186,119 @@ botonFinalizarVenta = Button(panelBotonesVenta, text="Finalizar venta",
 botonFinalizarVenta.pack(side="right", padx=8, ipady=4, ipadx=8)
 
 #PESTAÑA CLIENTES
-tituloClientes = Label(clientes, text="Clientes",
+#Encabezado del módulo de clientes
+tituloClientes = Label(clientes, text="Gestión de clientes",
     font=("Arial", 20, "bold"), bg=FONDO, fg=CANELA)
-tituloClientes.pack(pady=(35, 8))
+tituloClientes.pack(pady=(12, 2))
 
 mensajeClientes = Label(clientes,
-    text="Aquí construiremos el registro y la gestión de clientes.",
+    text="Registra los datos de tus clientes y consulta sus registros.",
     font=("Arial", 10), bg=FONDO, fg=TEXTO)
-mensajeClientes.pack(pady=5)
+mensajeClientes.pack(pady=(0, 10))
+
+#Panel del formulario de clientes
+panelFormularioClientes = Frame(clientes, bg=BLANCO,
+    bd=1, relief="solid")
+panelFormularioClientes.pack(fill="x", padx=15, pady=(0, 10))
+
+#Título del formulario
+tituloFormularioClientes = Label(panelFormularioClientes,
+    text="Datos del cliente", font=("Arial", 13, "bold"),
+    bg=BLANCO, fg=CANELA)
+tituloFormularioClientes.grid(row=0, column=0, columnspan=4,
+    sticky="w", padx=15, pady=(10, 8))
+
+#ID del cliente: se asignará automáticamente en el siguiente paso
+Label(panelFormularioClientes, text="ID del cliente",
+    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
+    row=1, column=0, sticky="w", padx=15, pady=(0, 3))
+cuadroIDCliente = Entry(panelFormularioClientes, font=("Arial", 10),
+    bg=DURAZNO_CLARO, fg=TEXTO, relief="solid", bd=1,
+    state="readonly")
+cuadroIDCliente.grid(row=2, column=0, sticky="ew", padx=15, pady=(0, 8), ipady=3)
+
+#Nombre completo del cliente
+Label(panelFormularioClientes, text="Nombre completo *",
+    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
+    row=1, column=1, sticky="w", padx=15, pady=(0, 3))
+cuadroNombreCliente = Entry(panelFormularioClientes, font=("Arial", 10),
+    bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
+cuadroNombreCliente.grid(row=2, column=1, sticky="ew", padx=15, pady=(0, 8), ipady=3)
+
+#Teléfono del cliente
+Label(panelFormularioClientes, text="Teléfono",
+    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
+    row=1, column=2, sticky="w", padx=15, pady=(0, 3))
+cuadroTelefonoCliente = Entry(panelFormularioClientes, font=("Arial", 10),
+    bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
+cuadroTelefonoCliente.grid(row=2, column=2, sticky="ew", padx=15, pady=(0, 8), ipady=3)
+
+#Correo electrónico del cliente
+Label(panelFormularioClientes, text="Correo electrónico",
+    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
+    row=3, column=0, sticky="w", padx=15, pady=(0, 3))
+cuadroCorreoCliente = Entry(panelFormularioClientes, font=("Arial", 10),
+    bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
+cuadroCorreoCliente.grid(row=4, column=0, columnspan=2,
+    sticky="ew", padx=15, pady=(0, 12), ipady=3)
+
+#Dirección del cliente (opcional)
+Label(panelFormularioClientes, text="Dirección (opcional)",
+    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
+    row=3, column=2, sticky="w", padx=15, pady=(0, 3))
+cuadroDireccionCliente = Entry(panelFormularioClientes, font=("Arial", 10),
+    bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
+cuadroDireccionCliente.grid(row=4, column=2, columnspan=2,
+    sticky="ew", padx=15, pady=(0, 12), ipady=3)
+
+#Permitir que las columnas del formulario se adapten al tamaño de la ventana
+for columnaCliente in range(4):
+    panelFormularioClientes.grid_columnconfigure(columnaCliente, weight=1)
+
+#Panel de la tabla de clientes
+tituloTablaClientes = Label(clientes, text="Clientes registrados",
+    font=("Arial", 13, "bold"), bg=FONDO, fg=CANELA)
+tituloTablaClientes.pack(anchor="w", padx=18, pady=(0, 5))
+
+panelTablaClientes = Frame(clientes, bg=FONDO)
+panelTablaClientes.pack(fill="both", expand=True, padx=15, pady=(0, 12))
+
+columnasClientes = ("ID", "Nombre completo", "Teléfono", "Correo electrónico", "Dirección")
+tablaClientes = ttk.Treeview(panelTablaClientes,
+    columns=columnasClientes, show="headings", selectmode="browse")
+
+anchosClientes = {
+    "ID": 65,
+    "Nombre completo": 220,
+    "Teléfono": 130,
+    "Correo electrónico": 220,
+    "Dirección": 250
+}
+
+for columnaCliente in columnasClientes:
+    tablaClientes.heading(columnaCliente, text=columnaCliente)
+    tablaClientes.column(columnaCliente,
+        width=anchosClientes[columnaCliente], minwidth=70, anchor="center")
+
+tablaClientes.tag_configure("cliente_claro", background=BLANCO, foreground=TEXTO)
+tablaClientes.tag_configure("cliente_otonial", background=DURAZNO_CLARO, foreground=TEXTO)
+
+barraVerticalClientes = ttk.Scrollbar(panelTablaClientes,
+    orient="vertical", command=tablaClientes.yview)
+barraHorizontalClientes = ttk.Scrollbar(panelTablaClientes,
+    orient="horizontal", command=tablaClientes.xview)
+tablaClientes.configure(
+    yscrollcommand=barraVerticalClientes.set,
+    xscrollcommand=barraHorizontalClientes.set)
+
+tablaClientes.grid(row=0, column=0, sticky="nsew")
+barraVerticalClientes.grid(row=0, column=1, sticky="ns")
+barraHorizontalClientes.grid(row=1, column=0, sticky="ew")
+panelTablaClientes.grid_rowconfigure(0, weight=1)
+panelTablaClientes.grid_columnconfigure(0, weight=1)
+
+#En este primer paso se prepara la interfaz; las acciones de los botones
+#y el registro real de clientes se programarán en el siguiente paso.
 
 #Cargar los productos iniciales en el inventario y en el selector de ventas
 actualizarInventario()
