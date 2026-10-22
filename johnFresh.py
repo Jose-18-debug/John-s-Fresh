@@ -51,10 +51,11 @@ siguienteID = len(productos) + 1
 productoSeleccionadoID = None
 carritoVentas = {}
 
-#Lista temporal de clientes (sin base de datos)
+#Listas temporales de clientes y ventas registradas (sin base de datos)
 clientesRegistrados = []
 siguienteIDCliente = 1
 clienteSeleccionadoID = None
+ventasRegistradas = []  # Conserva el historial de ventas durante la sesión
 
 #Control del folio de los tickets durante la sesión
 siguienteFolio = 1
@@ -250,6 +251,16 @@ mensajeVentas = Label(ventas,
     text="Selecciona un producto, indica la cantidad y agrégalo a la venta.",
     font=("Arial", 9), bg=CONTENIDO, fg=TEXTO)
 mensajeVentas.pack(pady=(0, 6))
+
+#Panel para relacionar la venta con un cliente registrado
+panelClienteVenta = Frame(ventas, bg=BLANCO)
+panelClienteVenta.pack(fill="x", padx=12, pady=(0, 5))
+Label(panelClienteVenta, text="Cliente de esta venta",
+    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).pack(
+    side="left", padx=(10, 8), pady=6)
+comboClienteVenta = ttk.Combobox(panelClienteVenta, state="readonly",
+    width=55, font=("Arial", 9))
+comboClienteVenta.pack(side="left", fill="x", expand=True, padx=(0, 10), pady=5)
 
 #Panel para seleccionar productos
 panelSeleccionVenta = Frame(ventas, bg=BLANCO)
@@ -742,7 +753,7 @@ def quitarProductoVenta():
 
 #Crear el contenido de un ticket de venta
 def generarTextoTicket(folio, fecha, articulos, subtotal, iva,
-                       total, efectivo, cambio):
+                       total, efectivo, cambio, cliente=None):
     ancho = 46
     lineas = []
 
@@ -752,6 +763,13 @@ def generarTextoTicket(folio, fecha, articulos, subtotal, iva,
     lineas.append("=" * ancho)
     lineas.append(f"Folio: {folio:04d}")
     lineas.append(f"Fecha: {fecha}")
+    if cliente:
+        lineas.append(f"Cliente: {cliente['Nombre']}")
+        lineas.append(f"ID de cliente: {cliente['ID']}")
+        if cliente.get("Telefono"):
+            lineas.append(f"Teléfono: {cliente['Telefono']}")
+    else:
+        lineas.append("Cliente: Venta general")
     lineas.append("-" * ancho)
     lineas.append("PRODUCTOS")
     lineas.append("-" * ancho)
@@ -991,6 +1009,24 @@ def mostrarTicket(textoTicket, folio):
 def finalizarVenta():
     global siguienteFolio
 
+    # Obtener el cliente elegido; también se permiten ventas generales.
+    clienteVenta = None
+    opcionCliente = comboClienteVenta.get().strip()
+    if opcionCliente and opcionCliente != "Venta general (sin cliente registrado)":
+        try:
+            idClienteVenta = int(opcionCliente.split(" - ", 1)[0])
+        except ValueError:
+            messagebox.showerror("Cliente no válido",
+                "Selecciona un cliente de la lista o elige una venta general.")
+            return
+        clienteVenta = next((c for c in clientesRegistrados
+                             if c["ID"] == idClienteVenta), None)
+        if clienteVenta is None:
+            messagebox.showwarning("Cliente no disponible",
+                "El cliente seleccionado ya no está registrado. Actualiza la selección.")
+            actualizarSelectorClientesVentas()
+            return
+
     if not carritoVentas:
         messagebox.showwarning(
             "Venta vacía",
@@ -1074,7 +1110,8 @@ def finalizarVenta():
         f"IVA (16 %): ${iva:,.2f}\n"
         f"Total: ${total:,.2f}\n\n"
         f"Efectivo recibido: ${efectivo:,.2f}\n"
-        f"Cambio: ${cambio:,.2f}\n\n"
+        f"Cambio: ${cambio:,.2f}\n"
+        f"Cliente: {clienteVenta['Nombre'] if clienteVenta else 'Venta general'}\n\n"
         "¿Deseas confirmar la venta?"
     )
 
@@ -1103,6 +1140,17 @@ def finalizarVenta():
     folio = siguienteFolio
     fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
+    # Guardar una copia de los datos del cliente para que el registro de venta
+    # no cambie aunque después se editen los datos del cliente.
+    clienteTicket = None
+    if clienteVenta:
+        clienteTicket = {
+            "ID": clienteVenta["ID"],
+            "Nombre": clienteVenta["Nombre"],
+            "Telefono": clienteVenta.get("Telefono", ""),
+            "Direccion": clienteVenta.get("Direccion", "")
+        }
+
     textoTicket = generarTextoTicket(
         folio,
         fecha,
@@ -1111,8 +1159,27 @@ def finalizarVenta():
         iva,
         total,
         efectivo,
-        cambio
+        cambio,
+        clienteTicket
     )
+
+    # Registrar la venta y actualizar la fecha de última compra del cliente.
+    ventasRegistradas.append({
+        "Folio": folio,
+        "Fecha": fecha,
+        "ClienteID": clienteVenta["ID"] if clienteVenta else None,
+        "ClienteNombre": clienteVenta["Nombre"] if clienteVenta else "Venta general",
+        "Articulos": [dict(item) for item in articulosTicket],
+        "Subtotal": subtotal,
+        "IVA": iva,
+        "Total": total,
+        "Efectivo": efectivo,
+        "Cambio": cambio,
+        "Ticket": textoTicket
+    })
+    if clienteVenta:
+        clienteVenta["Fecha"] = datetime.now().strftime("%d/%m/%Y")
+        actualizarTablaClientes()
 
     #Descontar existencias solamente al confirmar
     for identificador, item in carritoVentas.items():
@@ -1151,8 +1218,8 @@ botonGuardar.pack(fill="x", padx=25, pady=3, ipady=4)
 
 botonLimpiar = Button(panelFormulario, text="Limpiar campos",
     command=limpiarCampos, font=("Arial", 10, "bold"),
-    bg=DURAZNO, fg=TEXTO, activebackground=DURAZNO_CLARO,
-    activeforeground=TEXTO, relief="flat", cursor="hand2")
+    bg=DURAZNO, fg=CANELA, activebackground=DURAZNO_CLARO,
+    activeforeground=CANELA, relief="flat", cursor="hand2")
 botonLimpiar.pack(fill="x", padx=25, pady=(3, 10), ipady=4)
 
 #BOTONES DEL INVENTARIO
@@ -1180,8 +1247,8 @@ botonAgregarVenta.grid(row=1, column=2, padx=8, pady=(0, 5), ipady=3)
 
 botonQuitarVenta = Button(panelBotonesVenta, text="Quitar producto",
     command=quitarProductoVenta, font=("Arial", 9, "bold"),
-    bg=DURAZNO, fg=TEXTO, activebackground=DURAZNO_CLARO,
-    relief="flat", cursor="hand2")
+    bg=DURAZNO, fg=CANELA, activebackground=DURAZNO_CLARO,
+    activeforeground=CANELA, relief="flat", cursor="hand2")
 botonQuitarVenta.pack(side="left", padx=(0, 8), ipady=4, ipadx=8)
 
 botonFinalizarVenta = Button(panelBotonesVenta, text="Finalizar venta",
@@ -1200,12 +1267,26 @@ def limpiarCamposCliente():
     cuadroIDCliente.config(state="readonly")
     cuadroNombreCliente.delete(0, END)
     cuadroTelefonoCliente.delete(0, END)
-    cuadroCorreoCliente.delete(0, END)
+    cuadroFechaCliente.config(state="normal")
+    cuadroFechaCliente.delete(0, END)
+    cuadroFechaCliente.config(state="readonly")
     cuadroDireccionCliente.delete(0, END)
     if tablaClientes.selection():
         tablaClientes.selection_remove(tablaClientes.selection())
     botonRegistrarCliente.config(state="normal")
     botonGuardarCambiosCliente.config(state="disabled")
+
+#Actualizar la lista de clientes disponible en la pestaña Ventas
+def actualizarSelectorClientesVentas():
+    opciones = ["Venta general (sin cliente registrado)"]
+    for cliente in clientesRegistrados:
+        opciones.append(f'{cliente["ID"]} - {cliente["Nombre"]}')
+    seleccionAnterior = comboClienteVenta.get()
+    comboClienteVenta["values"] = opciones
+    if seleccionAnterior in opciones:
+        comboClienteVenta.set(seleccionAnterior)
+    else:
+        comboClienteVenta.set(opciones[0])
 
 #Actualizar la tabla con los clientes registrados
 def actualizarTablaClientes():
@@ -1215,7 +1296,7 @@ def actualizarTablaClientes():
         etiqueta = "cliente_claro" if indice % 2 == 0 else "cliente_otonial"
         tablaClientes.insert("", END, values=(
             cliente["ID"], cliente["Nombre"], cliente["Telefono"],
-            cliente["Correo"], cliente["Direccion"]
+            cliente["Fecha"], cliente["Direccion"]
         ), tags=(etiqueta,))
 
 #Registrar un cliente nuevo
@@ -1223,27 +1304,28 @@ def registrarCliente():
     global siguienteIDCliente
     nombre = cuadroNombreCliente.get().strip()
     telefono = cuadroTelefonoCliente.get().strip()
-    correo = cuadroCorreoCliente.get().strip()
+    fecha = cuadroFechaCliente.get().strip()
     direccion = cuadroDireccionCliente.get().strip()
 
     if not nombre:
         messagebox.showwarning("Dato obligatorio", "Escribe el nombre completo del cliente.", parent=raiz)
         cuadroNombreCliente.focus_set()
         return
+    if not direccion:
+        messagebox.showwarning("Dato obligatorio", "Escribe la dirección del cliente.", parent=raiz)
+        cuadroDireccionCliente.focus_set()
+        return
     if telefono and not telefono.replace(" ", "").replace("-", "").replace("+", "").isdigit():
         messagebox.showwarning("Teléfono no válido", "Revisa el teléfono. Utiliza números y, si lo necesitas, espacios, guiones o el signo +.", parent=raiz)
         cuadroTelefonoCliente.focus_set()
         return
-    if correo and ("@" not in correo or "." not in correo.split("@")[-1]):
-        messagebox.showwarning("Correo no válido", "Escribe un correo válido o deja el campo vacío.", parent=raiz)
-        cuadroCorreoCliente.focus_set()
-        return
 
     cliente = {"ID": siguienteIDCliente, "Nombre": nombre, "Telefono": telefono,
-               "Correo": correo, "Direccion": direccion}
+               "Fecha": fecha, "Direccion": direccion}
     clientesRegistrados.append(cliente)
     siguienteIDCliente += 1
     actualizarTablaClientes()
+    actualizarSelectorClientesVentas()
     limpiarCamposCliente()
     messagebox.showinfo("Cliente registrado", f"Se registró correctamente a {nombre}.", parent=raiz)
 
@@ -1261,10 +1343,13 @@ def seleccionarCliente(event=None):
     cuadroIDCliente.config(state="readonly")
     for cuadro, valor in ((cuadroNombreCliente, valores[1]),
                           (cuadroTelefonoCliente, valores[2]),
-                          (cuadroCorreoCliente, valores[3]),
                           (cuadroDireccionCliente, valores[4])):
         cuadro.delete(0, END)
         cuadro.insert(0, valor)
+    cuadroFechaCliente.config(state="normal")
+    cuadroFechaCliente.delete(0, END)
+    cuadroFechaCliente.insert(0, valores[3])
+    cuadroFechaCliente.config(state="readonly")
     botonRegistrarCliente.config(state="disabled")
     botonGuardarCambiosCliente.config(state="normal")
 
@@ -1276,26 +1361,27 @@ def guardarCambiosCliente():
         return
     nombre = cuadroNombreCliente.get().strip()
     telefono = cuadroTelefonoCliente.get().strip()
-    correo = cuadroCorreoCliente.get().strip()
+    fecha = cuadroFechaCliente.get().strip()
     direccion = cuadroDireccionCliente.get().strip()
     if not nombre:
         messagebox.showwarning("Dato obligatorio", "El nombre completo no puede quedar vacío.", parent=raiz)
         cuadroNombreCliente.focus_set()
         return
+    if not direccion:
+        messagebox.showwarning("Dato obligatorio", "La dirección del cliente no puede quedar vacía.", parent=raiz)
+        cuadroDireccionCliente.focus_set()
+        return
     if telefono and not telefono.replace(" ", "").replace("-", "").replace("+", "").isdigit():
         messagebox.showwarning("Teléfono no válido", "Revisa el formato del teléfono.", parent=raiz)
         cuadroTelefonoCliente.focus_set()
         return
-    if correo and ("@" not in correo or "." not in correo.split("@")[-1]):
-        messagebox.showwarning("Correo no válido", "Escribe un correo válido o deja el campo vacío.", parent=raiz)
-        cuadroCorreoCliente.focus_set()
-        return
     for cliente in clientesRegistrados:
         if cliente["ID"] == clienteSeleccionadoID:
             cliente.update({"Nombre": nombre, "Telefono": telefono,
-                            "Correo": correo, "Direccion": direccion})
+                            "Direccion": direccion})
             break
     actualizarTablaClientes()
+    actualizarSelectorClientesVentas()
     limpiarCamposCliente()
     messagebox.showinfo("Cambios guardados", "Los datos del cliente se actualizaron correctamente.", parent=raiz)
 
@@ -1313,6 +1399,7 @@ def eliminarCliente():
         return
     clientesRegistrados.remove(cliente)
     actualizarTablaClientes()
+    actualizarSelectorClientesVentas()
     limpiarCamposCliente()
     messagebox.showinfo("Cliente eliminado", "El cliente se eliminó correctamente.", parent=raiz)
 
@@ -1339,7 +1426,7 @@ tituloFormularioClientes = Label(panelFormularioClientes,
 tituloFormularioClientes.grid(row=0, column=0, columnspan=4,
     sticky="w", padx=15, pady=(10, 8))
 
-#ID del cliente: se asignará automáticamente en el siguiente paso
+#ID del cliente: se asigna automáticamente al registrarlo
 Label(panelFormularioClientes, text="ID del cliente",
     font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
     row=1, column=0, sticky="w", padx=15, pady=(0, 3))
@@ -1364,17 +1451,17 @@ cuadroTelefonoCliente = Entry(panelFormularioClientes, font=("Arial", 10),
     bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
 cuadroTelefonoCliente.grid(row=2, column=2, sticky="ew", padx=15, pady=(0, 8), ipady=3)
 
-#Correo electrónico del cliente
-Label(panelFormularioClientes, text="Correo electrónico",
+#Fecha de la última compra: se actualiza automáticamente al finalizar una venta
+Label(panelFormularioClientes, text="Fecha (última compra)",
     font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
     row=3, column=0, sticky="w", padx=15, pady=(0, 3))
-cuadroCorreoCliente = Entry(panelFormularioClientes, font=("Arial", 10),
-    bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
-cuadroCorreoCliente.grid(row=4, column=0, columnspan=2,
+cuadroFechaCliente = Entry(panelFormularioClientes, font=("Arial", 10),
+    bg=DURAZNO_CLARO, fg=TEXTO, relief="solid", bd=1, state="readonly")
+cuadroFechaCliente.grid(row=4, column=0, columnspan=2,
     sticky="ew", padx=15, pady=(0, 12), ipady=3)
 
-#Dirección del cliente (opcional)
-Label(panelFormularioClientes, text="Dirección (opcional)",
+#Dirección del cliente (obligatoria)
+Label(panelFormularioClientes, text="Dirección *",
     font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
     row=3, column=2, sticky="w", padx=15, pady=(0, 3))
 cuadroDireccionCliente = Entry(panelFormularioClientes, font=("Arial", 10),
@@ -1410,8 +1497,8 @@ botonEliminarCliente.pack(side="left", padx=8, ipady=5, ipadx=10)
 
 botonLimpiarCliente = Button(panelBotonesClientes, text="Limpiar campos",
     command=limpiarCamposCliente, font=("Arial", 10, "bold"),
-    bg=DURAZNO, fg=TEXTO, activebackground=DURAZNO_CLARO,
-    activeforeground=TEXTO, relief="flat", cursor="hand2")
+    bg=DURAZNO, fg=CANELA, activebackground=DURAZNO_CLARO,
+    activeforeground=CANELA, relief="flat", cursor="hand2")
 botonLimpiarCliente.pack(side="right", padx=(8, 0), ipady=5, ipadx=10)
 
 #Panel de la tabla de clientes
@@ -1422,7 +1509,7 @@ tituloTablaClientes.pack(anchor="w", padx=18, pady=(0, 5))
 panelTablaClientes = Frame(clientes, bg=FONDO)
 panelTablaClientes.pack(fill="both", expand=True, padx=15, pady=(0, 12))
 
-columnasClientes = ("ID", "Nombre completo", "Teléfono", "Correo electrónico", "Dirección")
+columnasClientes = ("ID", "Nombre completo", "Teléfono", "Fecha", "Dirección")
 tablaClientes = ttk.Treeview(panelTablaClientes,
     columns=columnasClientes, show="headings", selectmode="browse")
 
@@ -1430,7 +1517,7 @@ anchosClientes = {
     "ID": 65,
     "Nombre completo": 220,
     "Teléfono": 130,
-    "Correo electrónico": 220,
+    "Fecha": 130,
     "Dirección": 250
 }
 
@@ -1459,12 +1546,11 @@ panelTablaClientes.grid_columnconfigure(0, weight=1)
 #Enlazar la selección de clientes con el formulario
 tablaClientes.bind("<<TreeviewSelect>>", seleccionarCliente)
 
-#Los clientes se guardan temporalmente en una lista de Python.
-#Al cerrar el programa, estos registros se reinician porque no usamos base de datos.
-
 #Cargar los productos iniciales en el inventario y en el selector de ventas
 actualizarInventario()
 actualizarTablaVenta()
+actualizarSelectorClientesVentas()
 
 #Inicio del programa
 raiz.mainloop()
+
