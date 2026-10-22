@@ -1,4 +1,3 @@
-
 from tkinter import *
 from tkinter import ttk         #Importa componentes de Tkinter con estilos modernos
 from tkinter import messagebox  #Importa ventanas emergentes para mostrar mensajes
@@ -51,9 +50,17 @@ siguienteID = len(productos) + 1
 productoSeleccionadoID = None
 carritoVentas = {}
 
-#Listas temporales de clientes y ventas registradas (sin base de datos)
-clientesRegistrados = []
-siguienteIDCliente = 1
+#Clientes de ejemplo precargados (datos ficticios para demostración)
+clientesRegistrados = [
+    {"ID": 1, "Nombre": "Ana Martínez López", "Telefono": "771 100 2001", "Fecha": "", "Direccion": "Centro, Tula de Allende"},
+    {"ID": 2, "Nombre": "Carlos Hernández Ruiz", "Telefono": "771 100 2002", "Fecha": "", "Direccion": "San Marcos, Tula de Allende"},
+    {"ID": 3, "Nombre": "María Fernanda Cruz", "Telefono": "771 100 2003", "Fecha": "", "Direccion": "El Llano, Tula de Allende"},
+    {"ID": 4, "Nombre": "Luis Alberto Pérez", "Telefono": "771 100 2004", "Fecha": "", "Direccion": "Iturbe, Tula de Allende"},
+    {"ID": 5, "Nombre": "Sofía García Torres", "Telefono": "771 100 2005", "Fecha": "", "Direccion": "Bomintzhá, Tula de Allende"},
+    {"ID": 6, "Nombre": "José Manuel Sánchez", "Telefono": "771 100 2006", "Fecha": "", "Direccion": "Nantzha, Tula de Allende"},
+    {"ID": 7, "Nombre": "Valeria Ramírez Flores", "Telefono": "771 100 2007", "Fecha": "", "Direccion": "Xochitlán, Tula de Allende"},
+]
+siguienteIDCliente = len(clientesRegistrados) + 1
 clienteSeleccionadoID = None
 ventasRegistradas = []  # Conserva el historial de ventas durante la sesión
 
@@ -260,7 +267,15 @@ Label(panelClienteVenta, text="Cliente de esta venta",
     side="left", padx=(10, 8), pady=6)
 comboClienteVenta = ttk.Combobox(panelClienteVenta, state="readonly",
     width=55, font=("Arial", 9))
-comboClienteVenta.pack(side="left", fill="x", expand=True, padx=(0, 10), pady=5)
+comboClienteVenta.pack(side="left", fill="x", expand=True, padx=(0, 8), pady=5)
+botonNuevoClienteVenta = Button(
+    panelClienteVenta, text="＋ Nuevo cliente",
+    command=lambda: registrarClienteDesdeVentas(),
+    font=("Arial", 9, "bold"), bg=DURAZNO, fg=CANELA,
+    activebackground=DURAZNO_CLARO, activeforeground=CANELA,
+    relief="flat", cursor="hand2"
+)
+botonNuevoClienteVenta.pack(side="right", padx=(0, 8), pady=4, ipady=3, ipadx=5)
 
 #Panel para seleccionar productos
 panelSeleccionVenta = Frame(ventas, bg=BLANCO)
@@ -768,6 +783,8 @@ def generarTextoTicket(folio, fecha, articulos, subtotal, iva,
         lineas.append(f"ID de cliente: {cliente['ID']}")
         if cliente.get("Telefono"):
             lineas.append(f"Teléfono: {cliente['Telefono']}")
+        if cliente.get("Direccion"):
+            lineas.append(f"Dirección: {cliente['Direccion']}")
     else:
         lineas.append("Cliente: Venta general")
     lineas.append("-" * ancho)
@@ -1329,6 +1346,115 @@ def registrarCliente():
     limpiarCamposCliente()
     messagebox.showinfo("Cliente registrado", f"Se registró correctamente a {nombre}.", parent=raiz)
 
+#Registrar automáticamente un cliente nuevo desde la pestaña Ventas.
+#El registro también aparece en la pestaña Clientes y queda disponible en el selector.
+def registrarClienteDesdeVentas():
+    ventanaNuevo = Toplevel(raiz)
+    ventanaNuevo.title("Registrar nuevo cliente")
+    ventanaNuevo.configure(bg=CONTENIDO)
+    ventanaNuevo.resizable(False, False)
+    ventanaNuevo.transient(raiz)
+    ventanaNuevo.grab_set()
+
+    Label(ventanaNuevo, text="Nuevo cliente",
+        font=("Arial", 15, "bold"), bg=CONTENIDO, fg=CANELA).grid(
+        row=0, column=0, columnspan=2, padx=18, pady=(14, 10), sticky="w")
+    Label(ventanaNuevo, text="Nombre completo *",
+        font=("Arial", 9, "bold"), bg=CONTENIDO, fg=TEXTO).grid(
+        row=1, column=0, padx=18, pady=(3, 2), sticky="w")
+    entradaNombreNuevo = Entry(ventanaNuevo, font=("Arial", 10),
+        bg=BLANCO, fg=TEXTO, relief="solid", bd=1, width=34)
+    entradaNombreNuevo.grid(row=2, column=0, columnspan=2,
+        padx=18, pady=(0, 8), ipady=3, sticky="ew")
+
+    Label(ventanaNuevo, text="Teléfono",
+        font=("Arial", 9, "bold"), bg=CONTENIDO, fg=TEXTO).grid(
+        row=3, column=0, padx=18, pady=(3, 2), sticky="w")
+    entradaTelefonoNuevo = Entry(ventanaNuevo, font=("Arial", 10),
+        bg=BLANCO, fg=TEXTO, relief="solid", bd=1, width=34)
+    entradaTelefonoNuevo.grid(row=4, column=0, columnspan=2,
+        padx=18, pady=(0, 8), ipady=3, sticky="ew")
+
+    Label(ventanaNuevo, text="Dirección *",
+        font=("Arial", 9, "bold"), bg=CONTENIDO, fg=TEXTO).grid(
+        row=5, column=0, padx=18, pady=(3, 2), sticky="w")
+    entradaDireccionNuevo = Entry(ventanaNuevo, font=("Arial", 10),
+        bg=BLANCO, fg=TEXTO, relief="solid", bd=1, width=34)
+    entradaDireccionNuevo.grid(row=6, column=0, columnspan=2,
+        padx=18, pady=(0, 10), ipady=3, sticky="ew")
+
+    def guardarNuevoCliente():
+        global siguienteIDCliente
+        nombre = entradaNombreNuevo.get().strip()
+        telefono = entradaTelefonoNuevo.get().strip()
+        direccion = entradaDireccionNuevo.get().strip()
+
+        if not nombre:
+            messagebox.showwarning("Dato obligatorio",
+                "Escribe el nombre completo del cliente.", parent=ventanaNuevo)
+            entradaNombreNuevo.focus_set()
+            return
+        if not direccion:
+            messagebox.showwarning("Dato obligatorio",
+                "Escribe la dirección del cliente.", parent=ventanaNuevo)
+            entradaDireccionNuevo.focus_set()
+            return
+        if telefono and not telefono.replace(" ", "").replace("-", "").replace("+", "").isdigit():
+            messagebox.showwarning("Teléfono no válido",
+                "Revisa el teléfono. Utiliza números y, si lo necesitas, espacios, guiones o el signo +.",
+                parent=ventanaNuevo)
+            entradaTelefonoNuevo.focus_set()
+            return
+
+        # Evitar duplicados obvios por nombre y teléfono.
+        nombreNormalizado = nombre.casefold()
+        telefonoNormalizado = telefono.replace(" ", "").replace("-", "")
+        existente = next((c for c in clientesRegistrados
+            if c["Nombre"].strip().casefold() == nombreNormalizado
+            and c.get("Telefono", "").replace(" ", "").replace("-", "") == telefonoNormalizado
+            and telefonoNormalizado), None)
+        if existente:
+            actualizarSelectorClientesVentas()
+            comboClienteVenta.set(f'{existente["ID"]} - {existente["Nombre"]}')
+            messagebox.showinfo("Cliente existente",
+                "Ya hay un cliente con ese nombre y teléfono. Se seleccionó el registro existente.",
+                parent=ventanaNuevo)
+            ventanaNuevo.destroy()
+            return
+
+        clienteNuevo = {
+            "ID": siguienteIDCliente,
+            "Nombre": nombre,
+            "Telefono": telefono,
+            "Fecha": "",
+            "Direccion": direccion
+        }
+        clientesRegistrados.append(clienteNuevo)
+        siguienteIDCliente += 1
+        actualizarTablaClientes()
+        actualizarSelectorClientesVentas()
+        comboClienteVenta.set(f'{clienteNuevo["ID"]} - {clienteNuevo["Nombre"]}')
+        ventanaNuevo.destroy()
+        messagebox.showinfo("Cliente registrado",
+            f"{nombre} se agregó a Clientes y quedó seleccionado para esta venta.",
+            parent=raiz)
+
+    panelBotonesNuevo = Frame(ventanaNuevo, bg=CONTENIDO)
+    panelBotonesNuevo.grid(row=7, column=0, columnspan=2,
+        padx=18, pady=(0, 14), sticky="e")
+    Button(panelBotonesNuevo, text="Cancelar",
+        command=ventanaNuevo.destroy, font=("Arial", 9, "bold"),
+        bg=DURAZNO_CLARO, fg=CANELA, activebackground=DURAZNO,
+        activeforeground=CANELA, relief="flat", cursor="hand2").pack(
+        side="left", padx=(0, 8), ipadx=8, ipady=4)
+    Button(panelBotonesNuevo, text="Guardar cliente",
+        command=guardarNuevoCliente, font=("Arial", 9, "bold"),
+        bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
+        activeforeground=BLANCO, relief="flat", cursor="hand2").pack(
+        side="left", ipadx=8, ipady=4)
+
+    entradaNombreNuevo.focus_set()
+
 #Cargar en el formulario los datos de la fila seleccionada
 def seleccionarCliente(event=None):
     global clienteSeleccionadoID
@@ -1550,7 +1676,62 @@ tablaClientes.bind("<<TreeviewSelect>>", seleccionarCliente)
 actualizarInventario()
 actualizarTablaVenta()
 actualizarSelectorClientesVentas()
+actualizarTablaClientes()
+
+#LOGIN DEL SISTEMA
+#Credenciales solicitadas. Para un sistema real, no guardar contraseñas en texto plano.
+USUARIO_CORRECTO = "JoseMaria"
+CONTRASENA_CORRECTA = "Jose#2220301044"
+
+# Mostrar primero el acceso y ocultar la ventana principal.
+raiz.withdraw()
+ventanaLogin = Toplevel(raiz)
+ventanaLogin.title("Acceso - John's Fresh")
+ventanaLogin.geometry("390x300")
+ventanaLogin.resizable(False, False)
+ventanaLogin.configure(bg=CONTENIDO)
+ventanaLogin.protocol("WM_DELETE_WINDOW", raiz.destroy)
+
+try:
+    ventanaLogin.iconbitmap("Logo_JF_pequenio.ico")
+except TclError:
+    pass
+
+Label(ventanaLogin, text="John's Fresh", font=("Arial", 22, "bold"),
+      bg=CONTENIDO, fg=CANELA).pack(pady=(20, 3))
+Label(ventanaLogin, text="Inicia sesión para continuar",
+      font=("Arial", 10), bg=CONTENIDO, fg=TEXTO).pack(pady=(0, 12))
+
+Label(ventanaLogin, text="Usuario", font=("Arial", 10, "bold"),
+      bg=CONTENIDO, fg=TEXTO).pack(anchor="w", padx=45)
+entradaUsuario = Entry(ventanaLogin, font=("Arial", 11), relief="solid", bd=1)
+entradaUsuario.pack(fill="x", padx=45, pady=(3, 9), ipady=4)
+
+Label(ventanaLogin, text="Contraseña", font=("Arial", 10, "bold"),
+      bg=CONTENIDO, fg=TEXTO).pack(anchor="w", padx=45)
+entradaContrasena = Entry(ventanaLogin, font=("Arial", 11), show="*",
+                         relief="solid", bd=1)
+entradaContrasena.pack(fill="x", padx=45, pady=(3, 12), ipady=4)
+
+def iniciarSesion(event=None):
+    usuario = entradaUsuario.get().strip()
+    contrasena = entradaContrasena.get()
+    if usuario == USUARIO_CORRECTO and contrasena == CONTRASENA_CORRECTA:
+        ventanaLogin.destroy()
+        raiz.deiconify()
+    else:
+        messagebox.showerror("Acceso denegado",
+            "El usuario o la contraseña son incorrectos.", parent=ventanaLogin)
+        entradaContrasena.delete(0, END)
+        entradaContrasena.focus_set()
+
+Button(ventanaLogin, text="Iniciar sesión", command=iniciarSesion,
+       font=("Arial", 10, "bold"), bg=CANELA, fg=BLANCO,
+       activebackground=TERRACOTA, activeforeground=BLANCO,
+       relief="flat", cursor="hand2").pack(fill="x", padx=45, ipady=6)
+
+entradaUsuario.focus_set()
+ventanaLogin.bind("<Return>", iniciarSesion)
 
 #Inicio del programa
 raiz.mainloop()
-
