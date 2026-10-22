@@ -42,7 +42,8 @@ productos = [
     {"ID": 23, "Nombre": "Jabón de baño", "Marca": "Zest", "Cantidad": 20, "Precio": 16.00, "Categoría": "Higiene Personal", "Unidad": "Piezas"},
     {"ID": 24, "Nombre": "Esponja para trastes", "Marca": "Scotch-Brite", "Cantidad": 15, "Precio": 15.00, "Categoría": "Productos de Cocina", "Unidad": "Piezas"}
 ]
-siguienteID = 25
+
+siguienteID = len(productos) + 1
 productoSeleccionadoID = None
 carritoVentas = {}
 
@@ -54,6 +55,7 @@ categorias = [
     "Enlatados", "Condimentos y Especias", "Higiene Personal",
     "Congelados", "Otros"
 ]
+
 unidades = [
     "Piezas", "Kilogramos", "Gramos", "Litros",
     "Paquetes", "Cajas", "Botellas", "Latas",
@@ -89,8 +91,10 @@ estilo.map("Treeview", background=[("selected", TERRACOTA)],
     foreground=[("selected", BLANCO)])
 
 #Encabezado principal
-titulo = Label(raiz, text="John's Fresh", font=("Arial", 25, "bold"), bg=FONDO, fg=CANELA)
+titulo = Label(raiz, text="John's Fresh", font=("Arial", 25, "bold"),
+    bg=FONDO, fg=CANELA)
 titulo.pack(pady=(15, 0))
+
 subtitulo = Label(raiz, text="Sistema de punto de venta e inventario",
     font=("Arial", 11), bg=FONDO, fg=TEXTO)
 subtitulo.pack(pady=(0, 15))
@@ -98,10 +102,12 @@ subtitulo.pack(pady=(0, 15))
 #Creación de las pestañas principales
 pestania = ttk.Notebook(raiz)
 pestania.pack(fill="both", expand=True, padx=20, pady=(0, 15))
+
 inicio = Frame(pestania, bg=FONDO)
 inventario = Frame(pestania, bg=FONDO)
 ventas = Frame(pestania, bg=FONDO)
 clientes = Frame(pestania, bg=FONDO)
+
 pestania.add(inicio, text="Inicio")
 pestania.add(inventario, text="Inventario")
 pestania.add(ventas, text="Ventas")
@@ -123,7 +129,8 @@ try:
     etiquetaLogo = Label(panelLogo, image=logo, bg=FONDO, bd=0)
     etiquetaLogo.pack(expand=True)
 except (TclError, RuntimeError):
-    etiquetaLogo = Label(panelLogo, text="John's Fresh", font=("Arial", 27, "bold"), bg=FONDO, fg=CANELA)
+    etiquetaLogo = Label(panelLogo, text="John's Fresh",
+        font=("Arial", 27, "bold"), bg=FONDO, fg=CANELA)
     etiquetaLogo.pack(expand=True)
 
 #Título del formulario
@@ -181,15 +188,20 @@ cuadroUnidad.pack(fill="x", padx=25, ipady=3)
 tituloInventario = Label(inventario, text="Inventario de productos",
     font=("Arial", 18, "bold"), bg=FONDO, fg=CANELA)
 tituloInventario.pack(pady=(20, 5))
-mensajeInventario = Label(inventario, text="Selecciona un producto para consultarlo, editarlo o eliminarlo",
+
+mensajeInventario = Label(inventario,
+    text="Selecciona un producto para consultarlo, editarlo o eliminarlo",
     font=("Arial", 11), bg=FONDO, fg=TEXTO)
 mensajeInventario.pack(pady=(0, 12))
 
 #Panel de la tabla
 panelTabla = Frame(inventario, bg=FONDO)
 panelTabla.pack(fill="both", expand=True, padx=15, pady=(0, 8))
+
 columnas = ("ID", "Nombre", "Marca", "Cantidad", "Precio", "Categoría", "Unidad")
-tablaInventario = ttk.Treeview(panelTabla, columns=columnas, show="headings", selectmode="browse")
+tablaInventario = ttk.Treeview(panelTabla, columns=columnas,
+    show="headings", selectmode="browse")
+
 tablaInventario.tag_configure("fila_clara", background=BLANCO, foreground=TEXTO)
 tablaInventario.tag_configure("fila_otoñal", background=DURAZNO_CLARO, foreground=TEXTO)
 
@@ -198,11 +210,19 @@ anchos = {"ID": 55, "Nombre": 150, "Marca": 110, "Cantidad": 85,
 
 for columna in columnas:
     tablaInventario.heading(columna, text=columna)
-    tablaInventario.column(columna, width=anchos[columna], minwidth=50, anchor="center")
+    tablaInventario.column(columna, width=anchos[columna],
+        minwidth=50, anchor="center")
 
-barraVertical = ttk.Scrollbar(panelTabla, orient="vertical", command=tablaInventario.yview)
-barraHorizontal = ttk.Scrollbar(panelTabla, orient="horizontal", command=tablaInventario.xview)
-tablaInventario.configure(yscrollcommand=barraVertical.set, xscrollcommand=barraHorizontal.set)
+barraVertical = ttk.Scrollbar(panelTabla, orient="vertical",
+    command=tablaInventario.yview)
+barraHorizontal = ttk.Scrollbar(panelTabla, orient="horizontal",
+    command=tablaInventario.xview)
+
+tablaInventario.configure(
+    yscrollcommand=barraVertical.set,
+    xscrollcommand=barraHorizontal.set
+)
+
 tablaInventario.grid(row=0, column=0, sticky="nsew")
 barraVertical.grid(row=0, column=1, sticky="ns")
 barraHorizontal.grid(row=1, column=0, sticky="ew")
@@ -210,46 +230,60 @@ panelTabla.grid_rowconfigure(0, weight=1)
 panelTabla.grid_columnconfigure(0, weight=1)
 
 #PESTAÑA VENTAS
-tituloVentas = Label(ventas, text="Punto de venta", font=("Arial", 20, "bold"), bg=FONDO, fg=CANELA)
+tituloVentas = Label(ventas, text="Punto de venta",
+    font=("Arial", 20, "bold"), bg=FONDO, fg=CANELA)
 tituloVentas.pack(pady=(15, 5))
+
 mensajeVentas = Label(ventas, text="Selecciona los productos que deseas vender",
     font=("Arial", 10), bg=FONDO, fg=TEXTO)
 mensajeVentas.pack(pady=(0, 10))
 
 #Panel para seleccionar productos
 panelSeleccionVenta = Frame(ventas, bg=BLANCO)
-panelSeleccionVenta.pack(fill="x", padx=15, pady=(0, 10))
+panelSeleccionVenta.pack(fill="x", padx=15, pady=(0, 8))
 
-Label(panelSeleccionVenta, text="Producto disponible", font=("Arial", 10, "bold"),
-    bg=BLANCO, fg=TEXTO).grid(row=0, column=0, padx=12, pady=(10, 4), sticky="w")
-comboProducto = ttk.Combobox(panelSeleccionVenta, state="readonly", width=48, font=("Arial", 10))
-comboProducto.grid(row=1, column=0, padx=12, pady=(0, 10), sticky="ew")
+Label(panelSeleccionVenta, text="Producto disponible",
+    font=("Arial", 10, "bold"), bg=BLANCO, fg=TEXTO).grid(
+    row=0, column=0, padx=12, pady=(8, 4), sticky="w")
 
-Label(panelSeleccionVenta, text="Cantidad", font=("Arial", 10, "bold"),
-    bg=BLANCO, fg=TEXTO).grid(row=0, column=1, padx=12, pady=(10, 4), sticky="w")
-cuadroCantidadVenta = Entry(panelSeleccionVenta, font=("Arial", 10), width=12,
-    bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
-cuadroCantidadVenta.grid(row=1, column=1, padx=12, pady=(0, 10), ipady=3)
+comboProducto = ttk.Combobox(panelSeleccionVenta, state="readonly",
+    width=65, font=("Arial", 10))
+comboProducto.grid(row=1, column=0, padx=12, pady=(0, 8), sticky="ew")
+
+Label(panelSeleccionVenta, text="Cantidad",
+    font=("Arial", 10, "bold"), bg=BLANCO, fg=TEXTO).grid(
+    row=0, column=1, padx=12, pady=(8, 4), sticky="w")
+
+cuadroCantidadVenta = Entry(panelSeleccionVenta, font=("Arial", 10),
+    width=10, bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
+cuadroCantidadVenta.grid(row=1, column=1, padx=12, pady=(0, 8), ipady=3)
 
 panelSeleccionVenta.grid_columnconfigure(0, weight=1)
 
 #Panel de productos de la venta
 tituloCarrito = Label(ventas, text="Productos de la venta actual",
     font=("Arial", 13, "bold"), bg=FONDO, fg=CANELA)
-tituloCarrito.pack(pady=(0, 8))
+tituloCarrito.pack(pady=(0, 5))
 
 panelCarrito = Frame(ventas, bg=FONDO)
-panelCarrito.pack(fill="both", expand=True, padx=15, pady=(0, 8))
+panelCarrito.pack(fill="both", expand=True, padx=15, pady=(0, 4))
 
 columnasVenta = ("ID", "Nombre", "Cantidad", "Precio unitario", "Importe")
-tablaVenta = ttk.Treeview(panelCarrito, columns=columnasVenta, show="headings", selectmode="browse")
-anchosVenta = {"ID": 55, "Nombre": 220, "Cantidad": 90, "Precio unitario": 120, "Importe": 120}
+tablaVenta = ttk.Treeview(panelCarrito, columns=columnasVenta,
+    show="headings", selectmode="browse", height=5)
+
+anchosVenta = {
+    "ID": 55, "Nombre": 220, "Cantidad": 90,
+    "Precio unitario": 120, "Importe": 120
+}
 
 for columna in columnasVenta:
     tablaVenta.heading(columna, text=columna)
-    tablaVenta.column(columna, width=anchosVenta[columna], minwidth=50, anchor="center")
+    tablaVenta.column(columna, width=anchosVenta[columna],
+        minwidth=50, anchor="center")
 
-barraVenta = ttk.Scrollbar(panelCarrito, orient="vertical", command=tablaVenta.yview)
+barraVenta = ttk.Scrollbar(panelCarrito, orient="vertical",
+    command=tablaVenta.yview)
 tablaVenta.configure(yscrollcommand=barraVenta.set)
 tablaVenta.grid(row=0, column=0, sticky="nsew")
 barraVenta.grid(row=0, column=1, sticky="ns")
@@ -258,28 +292,53 @@ panelCarrito.grid_columnconfigure(0, weight=1)
 
 #Panel de botones de venta
 panelBotonesVenta = Frame(ventas, bg=FONDO)
-panelBotonesVenta.pack(fill="x", padx=15, pady=(0, 8))
+panelBotonesVenta.pack(fill="x", padx=15, pady=(0, 4))
 
 #Panel de totales
 panelTotales = Frame(ventas, bg=BLANCO)
-panelTotales.pack(fill="x", padx=15, pady=(0, 12))
+panelTotales.pack(fill="x", padx=15, pady=(0, 6))
 
-etiquetaSubtotal = Label(panelTotales, text="Subtotal: $0.00", font=("Arial", 11, "bold"), bg=BLANCO, fg=TEXTO)
-etiquetaSubtotal.pack(anchor="e", padx=15, pady=(8, 2))
-etiquetaIVA = Label(panelTotales, text="IVA (16 %): $0.00", font=("Arial", 11), bg=BLANCO, fg=TEXTO)
+etiquetaSubtotal = Label(panelTotales, text="Subtotal: $0.00",
+    font=("Arial", 11, "bold"), bg=BLANCO, fg=TEXTO)
+etiquetaSubtotal.pack(anchor="e", padx=15, pady=(6, 2))
+
+etiquetaIVA = Label(panelTotales, text="IVA (16 %): $0.00",
+    font=("Arial", 11), bg=BLANCO, fg=TEXTO)
 etiquetaIVA.pack(anchor="e", padx=15, pady=2)
-etiquetaTotal = Label(panelTotales, text="Total: $0.00", font=("Arial", 14, "bold"), bg=BLANCO, fg=CANELA)
-etiquetaTotal.pack(anchor="e", padx=15, pady=(2, 8))
+
+etiquetaTotal = Label(panelTotales, text="Total: $0.00",
+    font=("Arial", 14, "bold"), bg=BLANCO, fg=CANELA)
+etiquetaTotal.pack(anchor="e", padx=15, pady=(2, 5))
+
+#Panel para el pago en efectivo
+panelPago = Frame(panelTotales, bg=BLANCO)
+panelPago.pack(fill="x", padx=15, pady=(0, 6))
+
+Label(panelPago, text="Efectivo recibido: $",
+    font=("Arial", 10, "bold"), bg=BLANCO, fg=TEXTO).pack(side="left")
+
+cuadroEfectivo = Entry(panelPago, font=("Arial", 10),
+    width=14, bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
+cuadroEfectivo.pack(side="left", padx=(5, 12), ipady=3)
+
+etiquetaCambio = Label(panelPago, text="Cambio: $0.00",
+    font=("Arial", 11, "bold"), bg=BLANCO, fg=CANELA)
+etiquetaCambio.pack(side="left", padx=5)
 
 #FUNCIONES DEL INVENTARIO Y LAS VENTAS
 #Actualizar las opciones de productos disponibles
 def actualizarSelectorVentas():
     opciones = []
+
     for producto in productos:
         if producto["Cantidad"] > 0:
             opciones.append(
-                f'{producto["ID"]} - {producto["Nombre"]} | Existencia: {producto["Cantidad"]:g} | ${producto["Precio"]:,.2f}'
+                f'{producto["ID"]} - {producto["Nombre"]} | '
+                f'Unidad: {producto["Unidad"]} | '
+                f'Existencia: {producto["Cantidad"]:g} | '
+                f'${producto["Precio"]:,.2f}'
             )
+
     comboProducto["values"] = opciones
 
     if comboProducto.get() not in opciones:
@@ -292,16 +351,19 @@ def actualizarInventario():
 
     for indice, producto in enumerate(productos):
         colorFila = "fila_clara" if indice % 2 == 0 else "fila_otoñal"
+
         tablaInventario.insert("", END, values=(
             producto["ID"], producto["Nombre"], producto["Marca"],
             f'{producto["Cantidad"]:g}', f'${producto["Precio"]:,.2f}',
-            producto["Categoría"], producto["Unidad"]), tags=(colorFila,))
+            producto["Categoría"], producto["Unidad"]
+        ), tags=(colorFila,))
 
     actualizarSelectorVentas()
 
 #Seleccionar un producto de la tabla del inventario
 def seleccionarProducto(event=None):
     global productoSeleccionadoID
+
     seleccion = tablaInventario.selection()
     if not seleccion:
         return
@@ -315,6 +377,7 @@ def seleccionarProducto(event=None):
     for producto in productos:
         if producto["ID"] == identificador:
             productoSeleccionadoID = identificador
+
             cuadroID.configure(state="normal")
             cuadroID.delete(0, END)
             cuadroID.insert(0, producto["ID"])
@@ -322,12 +385,16 @@ def seleccionarProducto(event=None):
 
             cuadroNombre.delete(0, END)
             cuadroNombre.insert(0, producto["Nombre"])
+
             cuadroMarca.delete(0, END)
             cuadroMarca.insert(0, producto["Marca"])
+
             cuadroCantidad.delete(0, END)
             cuadroCantidad.insert(0, f'{producto["Cantidad"]:g}')
+
             cuadroPrecio.delete(0, END)
             cuadroPrecio.insert(0, f'{producto["Precio"]:g}')
+
             cuadroCategoria.set(producto["Categoría"])
             cuadroUnidad.set(producto["Unidad"])
             break
@@ -337,6 +404,7 @@ tablaInventario.bind("<<TreeviewSelect>>", seleccionarProducto)
 #Limpiar el formulario
 def limpiarCampos():
     global productoSeleccionadoID
+
     productoSeleccionadoID = None
 
     cuadroID.configure(state="normal")
@@ -363,35 +431,54 @@ def obtenerDatosFormulario():
     unidad = cuadroUnidad.get().strip()
 
     if not nombre or not cantidadTexto or not precioTexto or not categoria or not unidad:
-        messagebox.showwarning("Campos obligatorios",
-            "Completa el nombre, la cantidad, el precio, la categoría y la unidad.")
+        messagebox.showwarning(
+            "Campos obligatorios",
+            "Completa el nombre, la cantidad, el precio, la categoría y la unidad."
+        )
         return None
 
     try:
         cantidad = float(cantidadTexto.replace(",", "."))
         precio = float(precioTexto.replace(",", "."))
     except ValueError:
-        messagebox.showerror("Datos inválidos", "La cantidad y el precio deben ser números válidos.")
+        messagebox.showerror(
+            "Datos inválidos",
+            "La cantidad y el precio deben ser números válidos."
+        )
         return None
 
     if cantidad <= 0:
-        messagebox.showwarning("Cantidad inválida", "La cantidad debe ser mayor que cero.")
+        messagebox.showwarning(
+            "Cantidad inválida",
+            "La cantidad debe ser mayor que cero."
+        )
         return None
 
     if precio < 0:
-        messagebox.showwarning("Precio inválido", "El precio no puede ser negativo.")
+        messagebox.showwarning(
+            "Precio inválido",
+            "El precio no puede ser negativo."
+        )
         return None
 
-    return {"Nombre": nombre, "Marca": marca, "Cantidad": cantidad,
-        "Precio": precio, "Categoría": categoria, "Unidad": unidad}
+    return {
+        "Nombre": nombre,
+        "Marca": marca,
+        "Cantidad": cantidad,
+        "Precio": precio,
+        "Categoría": categoria,
+        "Unidad": unidad
+    }
 
 #Registrar un producto nuevo
 def registrarProducto():
     global siguienteID
 
     if productoSeleccionadoID is not None:
-        messagebox.showwarning("Producto seleccionado",
-            "Estás editando un producto existente. Pulsa Guardar cambios o Limpiar campos antes de registrar otro.")
+        messagebox.showwarning(
+            "Producto seleccionado",
+            "Estás editando un producto existente. Pulsa Guardar cambios o Limpiar campos antes de registrar otro."
+        )
         return
 
     datos = obtenerDatosFormulario()
@@ -402,15 +489,23 @@ def registrarProducto():
     productos.append(producto)
     identificador = siguienteID
     siguienteID += 1
+
     actualizarInventario()
-    messagebox.showinfo("Producto registrado",
-        f'El producto "{producto["Nombre"]}" se registró correctamente.\nID: {identificador}')
+
+    messagebox.showinfo(
+        "Producto registrado",
+        f'El producto "{producto["Nombre"]}" se registró correctamente.\nID: {identificador}'
+    )
+
     limpiarCampos()
 
 #Guardar cambios de un producto existente
 def guardarCambios():
     if productoSeleccionadoID is None:
-        messagebox.showwarning("Selecciona un producto", "Selecciona un producto del inventario antes de guardar cambios.")
+        messagebox.showwarning(
+            "Selecciona un producto",
+            "Selecciona un producto del inventario antes de guardar cambios."
+        )
         return
 
     datos = obtenerDatosFormulario()
@@ -422,80 +517,155 @@ def guardarCambios():
             producto.update(datos)
             break
     else:
-        messagebox.showerror("Producto no encontrado", "No se encontró el producto que deseas modificar.")
+        messagebox.showerror(
+            "Producto no encontrado",
+            "No se encontró el producto que deseas modificar."
+        )
         return
 
     actualizarInventario()
     limpiarCampos()
-    messagebox.showinfo("Cambios guardados", "El producto se actualizó correctamente.")
+
+    messagebox.showinfo(
+        "Cambios guardados",
+        "El producto se actualizó correctamente."
+    )
 
 #Abrir Inicio para editar un producto
 def irAEditar():
     if productoSeleccionadoID is None:
-        messagebox.showwarning("Selecciona un producto", "Primero selecciona un producto de la tabla.")
+        messagebox.showwarning(
+            "Selecciona un producto",
+            "Primero selecciona un producto de la tabla."
+        )
         return
+
     pestania.select(inicio)
 
-#Eliminar un producto del inventario
+#Eliminar un producto del inventario y reasignar los IDs
 def eliminarProducto():
-    global productoSeleccionadoID
+    global productoSeleccionadoID, siguienteID
 
     if productoSeleccionadoID is None:
-        messagebox.showwarning("Selecciona un producto", "Selecciona en la tabla el producto que deseas eliminar.")
+        messagebox.showwarning(
+            "Selecciona un producto",
+            "Selecciona en la tabla el producto que deseas eliminar."
+        )
         return
 
-    productoEliminar = next((p for p in productos if p["ID"] == productoSeleccionadoID), None)
+    productoEliminar = next(
+        (p for p in productos if p["ID"] == productoSeleccionadoID),
+        None
+    )
 
     if productoEliminar is None:
-        messagebox.showerror("Producto no encontrado", "No se encontró el producto seleccionado.")
+        messagebox.showerror(
+            "Producto no encontrado",
+            "No se encontró el producto seleccionado."
+        )
         return
 
     if productoEliminar["ID"] in carritoVentas:
-        messagebox.showwarning("Producto en venta", "No puedes eliminar un producto que está agregado a la venta actual.")
+        messagebox.showwarning(
+            "Producto en venta",
+            "No puedes eliminar un producto que está agregado a la venta actual."
+        )
         return
 
-    confirmar = messagebox.askyesno("Confirmar eliminación",
-        f'¿Seguro que deseas eliminar "{productoEliminar["Nombre"]}"?\n\nEsta acción no se puede deshacer.')
+    confirmar = messagebox.askyesno(
+        "Confirmar eliminación",
+        f'¿Seguro que deseas eliminar "{productoEliminar["Nombre"]}"?\n\n'
+        "Los IDs restantes se reorganizarán automáticamente."
+    )
 
     if not confirmar:
         return
 
+    #Eliminar el producto seleccionado
     productos.remove(productoEliminar)
+
+    #Guardar la correspondencia entre IDs anteriores y nuevos
+    nuevosIDs = {}
+
+    #Asignar IDs consecutivos desde el 1
+    for nuevoID, producto in enumerate(productos, start=1):
+        IDanterior = producto["ID"]
+        nuevosIDs[IDanterior] = nuevoID
+        producto["ID"] = nuevoID
+
+    #Actualizar los IDs de los productos que están en el carrito
+    carritoActualizado = {}
+
+    for IDanterior, item in carritoVentas.items():
+        nuevoID = nuevosIDs[IDanterior]
+        item["ID"] = nuevoID
+        carritoActualizado[nuevoID] = item
+
+    carritoVentas.clear()
+    carritoVentas.update(carritoActualizado)
+
+    #El siguiente ID será el número de productos más uno
+    siguienteID = len(productos) + 1
+
     actualizarInventario()
+    actualizarTablaVenta()
     limpiarCampos()
-    messagebox.showinfo("Producto eliminado", "El producto se eliminó correctamente.")
+
+    messagebox.showinfo(
+        "Producto eliminado",
+        "El producto se eliminó correctamente y los IDs se reorganizaron."
+    )
 
 #Agregar un producto a la venta actual
 def agregarProductoVenta():
     seleccion = comboProducto.get()
 
     if not seleccion:
-        messagebox.showwarning("Selecciona un producto", "Selecciona un producto disponible.")
+        messagebox.showwarning(
+            "Selecciona un producto",
+            "Selecciona un producto disponible."
+        )
         return
 
     try:
         identificador = int(seleccion.split(" - ", 1)[0])
         cantidad = float(cuadroCantidadVenta.get().strip().replace(",", "."))
     except ValueError:
-        messagebox.showerror("Datos inválidos", "Ingresa una cantidad numérica válida.")
+        messagebox.showerror(
+            "Datos inválidos",
+            "Ingresa una cantidad numérica válida."
+        )
         return
 
     if cantidad <= 0:
-        messagebox.showwarning("Cantidad inválida", "La cantidad debe ser mayor que cero.")
+        messagebox.showwarning(
+            "Cantidad inválida",
+            "La cantidad debe ser mayor que cero."
+        )
         return
 
-    producto = next((p for p in productos if p["ID"] == identificador), None)
+    producto = next(
+        (p for p in productos if p["ID"] == identificador),
+        None
+    )
 
     if producto is None:
-        messagebox.showerror("Producto no encontrado", "El producto ya no está disponible en el inventario.")
+        messagebox.showerror(
+            "Producto no encontrado",
+            "El producto ya no está disponible en el inventario."
+        )
         actualizarSelectorVentas()
         return
 
-    cantidadActual = carritoVentas.get(identificador, {}).get("Cantidad", 0)
+    cantidadActual = carritoVentas.get(
+        identificador, {}
+    ).get("Cantidad", 0)
 
     if cantidadActual + cantidad > producto["Cantidad"]:
-        messagebox.showwarning("Existencias insuficientes",
-            f'Hay {producto["Cantidad"]:g} unidades disponibles y ya agregaste {cantidadActual:g} a la venta.')
+        messagebox.showwarning(
+            "Existencias insuficientes",
+            f'Hay {producto["Cantidad"]:g} unidades disponibles y ya agregaste {cantidadActual:g} a la venta.'
+        )
         return
 
     if identificador in carritoVentas:
@@ -512,6 +682,10 @@ def agregarProductoVenta():
     cuadroCantidadVenta.delete(0, END)
     comboProducto.set("")
 
+    #Limpiar el importe de efectivo al modificar el carrito
+    cuadroEfectivo.delete(0, END)
+    etiquetaCambio.config(text="Cambio: $0.00")
+
 #Actualizar la tabla de la venta actual
 def actualizarTablaVenta():
     for fila in tablaVenta.get_children():
@@ -522,9 +696,11 @@ def actualizarTablaVenta():
     for identificador, item in carritoVentas.items():
         importe = item["Cantidad"] * item["Precio"]
         subtotal += importe
+
         tablaVenta.insert("", END, values=(
             item["ID"], item["Nombre"], f'{item["Cantidad"]:g}',
-            f'${item["Precio"]:,.2f}', f'${importe:,.2f}'))
+            f'${item["Precio"]:,.2f}', f'${importe:,.2f}'
+        ))
 
     iva = subtotal * 0.16
     total = subtotal + iva
@@ -538,7 +714,10 @@ def quitarProductoVenta():
     seleccion = tablaVenta.selection()
 
     if not seleccion:
-        messagebox.showwarning("Selecciona un producto", "Selecciona en la tabla el producto que deseas quitar.")
+        messagebox.showwarning(
+            "Selecciona un producto",
+            "Selecciona en la tabla el producto que deseas quitar."
+        )
         return
 
     valores = tablaVenta.item(seleccion[0], "values")
@@ -549,63 +728,142 @@ def quitarProductoVenta():
 
     actualizarTablaVenta()
 
+    cuadroEfectivo.delete(0, END)
+    etiquetaCambio.config(text="Cambio: $0.00")
+
 #Finalizar la venta y descontar existencias
 def finalizarVenta():
     if not carritoVentas:
-        messagebox.showwarning("Venta vacía", "Agrega al menos un producto antes de finalizar la venta.")
+        messagebox.showwarning(
+            "Venta vacía",
+            "Agrega al menos un producto antes de finalizar la venta."
+        )
         return
 
     #Verificar todas las existencias antes de descontar cualquier cantidad
     for identificador, item in carritoVentas.items():
-        producto = next((p for p in productos if p["ID"] == identificador), None)
+        producto = next(
+            (p for p in productos if p["ID"] == identificador),
+            None
+        )
 
         if producto is None:
-            messagebox.showerror("Producto no encontrado",
-                f'El producto "{item["Nombre"]}" ya no existe en el inventario.')
+            messagebox.showerror(
+                "Producto no encontrado",
+                f'El producto "{item["Nombre"]}" ya no existe en el inventario.'
+            )
             return
 
         if item["Cantidad"] > producto["Cantidad"]:
-            messagebox.showwarning("Existencias insuficientes",
-                f'Ya no hay suficientes unidades de "{producto["Nombre"]}". Actualiza la venta antes de continuar.')
+            messagebox.showwarning(
+                "Existencias insuficientes",
+                f'Ya no hay suficientes unidades de "{producto["Nombre"]}". Actualiza la venta antes de continuar.'
+            )
             return
 
-    subtotal = sum(item["Cantidad"] * item["Precio"] for item in carritoVentas.values())
+    #Calcular subtotal, IVA y total
+    subtotal = sum(
+        item["Cantidad"] * item["Precio"]
+        for item in carritoVentas.values()
+    )
+
     iva = subtotal * 0.16
     total = subtotal + iva
 
-    confirmar = messagebox.askyesno("Finalizar venta",
-        f"Subtotal: ${subtotal:,.2f}\nIVA (16 %): ${iva:,.2f}\nTotal: ${total:,.2f}\n\n¿Deseas confirmar la venta?")
+    #Validar el dinero recibido en efectivo
+    efectivoTexto = cuadroEfectivo.get().strip().replace(",", ".")
+
+    if not efectivoTexto:
+        messagebox.showwarning(
+            "Falta el pago",
+            "Ingresa el efectivo recibido del cliente."
+        )
+        cuadroEfectivo.focus_set()
+        return
+
+    try:
+        efectivo = float(efectivoTexto)
+    except ValueError:
+        messagebox.showerror(
+            "Pago inválido",
+            "Ingresa una cantidad de efectivo válida."
+        )
+        cuadroEfectivo.focus_set()
+        return
+
+    if efectivo < 0:
+        messagebox.showwarning(
+            "Pago inválido",
+            "El efectivo recibido no puede ser negativo."
+        )
+        return
+
+    if efectivo < total:
+        messagebox.showwarning(
+            "Efectivo insuficiente",
+            f'El total es ${total:,.2f} y el cliente entregó ${efectivo:,.2f}.\n'
+            f'Faltan ${total - efectivo:,.2f}.'
+        )
+        return
+
+    cambio = efectivo - total
+    etiquetaCambio.config(text=f"Cambio: ${cambio:,.2f}")
+
+    #Confirmar la venta antes de descontar existencias
+    confirmar = messagebox.askyesno(
+        "Finalizar venta",
+        f"Subtotal: ${subtotal:,.2f}\n"
+        f"IVA (16 %): ${iva:,.2f}\n"
+        f"Total: ${total:,.2f}\n\n"
+        f"Efectivo recibido: ${efectivo:,.2f}\n"
+        f"Cambio: ${cambio:,.2f}\n\n"
+        "¿Deseas confirmar la venta?"
+    )
 
     if not confirmar:
         return
 
     #Descontar existencias solamente al confirmar
     for identificador, item in carritoVentas.items():
-        producto = next(p for p in productos if p["ID"] == identificador)
+        producto = next(
+            p for p in productos if p["ID"] == identificador
+        )
         producto["Cantidad"] -= item["Cantidad"]
 
     carritoVentas.clear()
     actualizarTablaVenta()
     actualizarInventario()
+
     cuadroCantidadVenta.delete(0, END)
     comboProducto.set("")
+    cuadroEfectivo.delete(0, END)
+    etiquetaCambio.config(text="Cambio: $0.00")
 
-    messagebox.showinfo("Venta finalizada",
-        f"Venta registrada correctamente.\nTotal cobrado: ${total:,.2f}\n\nEl inventario se actualizó.")
+    messagebox.showinfo(
+        "Venta finalizada",
+        f"Venta registrada correctamente.\n"
+        f"Total: ${total:,.2f}\n"
+        f"Efectivo recibido: ${efectivo:,.2f}\n"
+        f"Cambio entregado: ${cambio:,.2f}\n\n"
+        "El inventario se actualizó."
+    )
 
 #BOTONES DE INICIO
-botonRegistrar = Button(panelFormulario, text="Registrar producto", command=registrarProducto,
-    font=("Arial", 10, "bold"), bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
+botonRegistrar = Button(panelFormulario, text="Registrar producto",
+    command=registrarProducto, font=("Arial", 10, "bold"),
+    bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
     activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonRegistrar.pack(fill="x", padx=25, pady=(10, 4), ipady=4)
 
-botonGuardar = Button(panelFormulario, text="Guardar cambios", command=guardarCambios,
-    font=("Arial", 10, "bold"), bg=TERRACOTA, fg=BLANCO, activebackground=CANELA,
+botonGuardar = Button(panelFormulario, text="Guardar cambios",
+    command=guardarCambios, font=("Arial", 10, "bold"),
+    bg=TERRACOTA, fg=BLANCO, activebackground=CANELA,
     activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonGuardar.pack(fill="x", padx=25, pady=4, ipady=4)
 
-botonLimpiar = Button(panelFormulario, text="Limpiar campos", command=limpiarCampos,
-    font=("Arial", 10, "bold"), bg=DURAZNO, fg=TEXTO, activebackground=DURAZNO_CLARO,
+botonLimpiar = Button(panelFormulario, text="Limpiar campos",
+    command=limpiarCampos, font=("Arial", 10, "bold"),
+    bg=DURAZNO, fg=TEXTO, activebackground=DURAZNO_CLARO,
     activeforeground=TEXTO, relief="flat", cursor="hand2")
 botonLimpiar.pack(fill="x", padx=25, pady=(4, 12), ipady=4)
 
@@ -613,43 +871,50 @@ botonLimpiar.pack(fill="x", padx=25, pady=(4, 12), ipady=4)
 panelBotonesInventario = Frame(inventario, bg=FONDO)
 panelBotonesInventario.pack(fill="x", padx=15, pady=(0, 15))
 
-botonEditar = Button(panelBotonesInventario, text="Editar en Inicio", command=irAEditar,
-    font=("Arial", 10, "bold"), bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
+botonEditar = Button(panelBotonesInventario, text="Editar en Inicio",
+    command=irAEditar, font=("Arial", 10, "bold"),
+    bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
     activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonEditar.pack(side="left", padx=(0, 8), ipady=5, ipadx=8)
 
-botonEliminar = Button(panelBotonesInventario, text="Eliminar producto", command=eliminarProducto,
-    font=("Arial", 10, "bold"), bg=ROJO, fg=BLANCO, activebackground="#82332B",
+botonEliminar = Button(panelBotonesInventario, text="Eliminar producto",
+    command=eliminarProducto, font=("Arial", 10, "bold"),
+    bg=ROJO, fg=BLANCO, activebackground="#82332B",
     activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonEliminar.pack(side="left", padx=8, ipady=5, ipadx=8)
 
 #BOTONES DE VENTAS
 botonAgregarVenta = Button(panelSeleccionVenta, text="Agregar a venta",
-    command=agregarProductoVenta, font=("Arial", 10, "bold"), bg=CANELA,
-    fg=BLANCO, activebackground=TERRACOTA, activeforeground=BLANCO,
-    relief="flat", cursor="hand2")
-botonAgregarVenta.grid(row=1, column=2, padx=12, pady=(0, 10), ipady=4)
+    command=agregarProductoVenta, font=("Arial", 10, "bold"),
+    bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
+    activeforeground=BLANCO, relief="flat", cursor="hand2")
+botonAgregarVenta.grid(row=1, column=2, padx=12, pady=(0, 8), ipady=4)
 
 botonQuitarVenta = Button(panelBotonesVenta, text="Quitar producto",
-    command=quitarProductoVenta, font=("Arial", 10, "bold"), bg=DURAZNO,
-    fg=TEXTO, activebackground=DURAZNO_CLARO, relief="flat", cursor="hand2")
+    command=quitarProductoVenta, font=("Arial", 10, "bold"),
+    bg=DURAZNO, fg=TEXTO, activebackground=DURAZNO_CLARO,
+    relief="flat", cursor="hand2")
 botonQuitarVenta.pack(side="left", padx=(0, 8), ipady=5, ipadx=8)
 
 botonFinalizarVenta = Button(panelBotonesVenta, text="Finalizar venta",
-    command=finalizarVenta, font=("Arial", 10, "bold"), bg=CANELA,
-    fg=BLANCO, activebackground=TERRACOTA, activeforeground=BLANCO,
-    relief="flat", cursor="hand2")
+    command=finalizarVenta, font=("Arial", 10, "bold"),
+    bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
+    activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonFinalizarVenta.pack(side="right", padx=8, ipady=5, ipadx=8)
 
 #PESTAÑA CLIENTES
-tituloClientes = Label(clientes, text="Clientes", font=("Arial", 20, "bold"), bg=FONDO, fg=CANELA)
+tituloClientes = Label(clientes, text="Clientes",
+    font=("Arial", 20, "bold"), bg=FONDO, fg=CANELA)
 tituloClientes.pack(pady=(40, 10))
-mensajeClientes = Label(clientes, text="Aquí construiremos el registro y la gestión de clientes.",
+
+mensajeClientes = Label(clientes,
+    text="Aquí construiremos el registro y la gestión de clientes.",
     font=("Arial", 11), bg=FONDO, fg=TEXTO)
 mensajeClientes.pack(pady=5)
 
 #Cargar los productos iniciales en el inventario y en el selector de ventas
 actualizarInventario()
+actualizarTablaVenta()
 
 #Inicio del programa
 raiz.mainloop()
