@@ -1,6 +1,7 @@
+
 from tkinter import *
 from tkinter import ttk  #Importa componentes de Tkinter con estilos modernos
-from tkinter import messagebox  #Importa ventanas emergentes para mostrar mensajes, advertencias y errores
+from tkinter import messagebox  #Importa ventanas emergentes para mostrar mensajes
 
 #Configuración de los colores para el sistema
 CANELA = "#713F35"
@@ -10,6 +11,7 @@ CREMA = "#F8EBDD"
 BLANCO = "#FFF9F2"
 TEXTO = "#49312B"
 BORDE = "#D3A18A"
+DURAZNO_CLARO = "#F0D9C5"
 
 #Lista temporal para guardar los productos
 productos = []
@@ -22,35 +24,81 @@ raiz.geometry("1050x750")
 raiz.minsize(900, 650)
 raiz.configure(bg=CREMA)
 
+#Configuración del icono de la aplicación
 try:
     raiz.iconbitmap("Logo_JF_pequenio.ico")
 except TclError:
     pass
 
-#Configuración del estilo de las pestañas
+#Configuración de los estilos
 estilo = ttk.Style()
 estilo.theme_use("clam")
-estilo.configure("TNotebook", background=CREMA, borderwidth=0)
-estilo.configure("TNotebook.Tab", background=DURAZNO, foreground=TEXTO, padding=[18, 10], font=("Arial", 10, "bold"))
-estilo.map("TNotebook.Tab", background=[("selected", CANELA)], foreground=[("selected", BLANCO)])
 
-#Configuración del estilo de la tabla
-estilo.configure("Treeview", background=BLANCO, foreground=TEXTO, fieldbackground=BLANCO, rowheight=28, font=("Arial", 10))
-estilo.configure("Treeview.Heading", background=CANELA, foreground=BLANCO, font=("Arial", 10, "bold"))
-estilo.map("Treeview", background=[("selected", DURAZNO)], foreground=[("selected", TEXTO)])
+estilo.configure(
+    "TNotebook",
+    background=CREMA,
+    borderwidth=0
+)
 
-#Título principal
-titulo = Label(raiz, text="JOHN'S FRESH", font=("Arial", 24, "bold"), bg=CREMA, fg=CANELA)
-titulo.pack(pady=(12, 3))
+estilo.configure(
+    "TNotebook.Tab",
+    background=DURAZNO,
+    foreground=TEXTO,
+    padding=[18, 10],
+    font=("Arial", 10, "bold")
+)
 
-subtitulo = Label(raiz, text="Sistema de punto de venta e inventario", font=("Arial", 11), bg=CREMA, fg=TEXTO)
-subtitulo.pack(pady=(0, 10))
+estilo.map(
+    "TNotebook.Tab",
+    background=[("selected", CANELA)],
+    foreground=[("selected", BLANCO)]
+)
 
-#Creación del contenedor de pestañas
+estilo.configure(
+    "Treeview",
+    background=BLANCO,
+    foreground=TEXTO,
+    fieldbackground=BLANCO,
+    rowheight=30,
+    font=("Arial", 10)
+)
+
+estilo.configure(
+    "Treeview.Heading",
+    background=CANELA,
+    foreground=BLANCO,
+    font=("Arial", 10, "bold")
+)
+
+estilo.map(
+    "Treeview",
+    background=[("selected", TERRACOTA)],
+    foreground=[("selected", BLANCO)]
+)
+
+#Encabezado principal
+titulo = Label(
+    raiz,
+    text="John's Fresh",
+    font=("Arial", 25, "bold"),
+    bg=CREMA,
+    fg=CANELA
+)
+titulo.pack(pady=(15, 0))
+
+subtitulo = Label(
+    raiz,
+    text="Sistema de punto de venta e inventario",
+    font=("Arial", 11),
+    bg=CREMA,
+    fg=TEXTO
+)
+subtitulo.pack(pady=(0, 15))
+
+#Creación de las pestañas principales
 pestania = ttk.Notebook(raiz)
 pestania.pack(fill="both", expand=True, padx=20, pady=(0, 15))
 
-#Creación de las pestañas
 inicio = Frame(pestania, bg=CREMA)
 inventario = Frame(pestania, bg=CREMA)
 ventas = Frame(pestania, bg=CREMA)
@@ -61,122 +109,276 @@ pestania.add(inventario, text="Inventario")
 pestania.add(ventas, text="Ventas")
 pestania.add(clientes, text="Clientes")
 
-#Diseño de la pestaña Inicio
-panelLogo = Frame(inicio, bg=CREMA)
-panelLogo.pack(side="left", fill="both", expand=True, padx=(15, 8), pady=10)
+#========================================
+#PESTAÑA INICIO
+#========================================
 
+#Panel del logo
+panelLogo = Frame(inicio, bg=CREMA)
+panelLogo.pack(
+    side="left",
+    fill="both",
+    expand=True,
+    padx=(15, 8),
+    pady=10
+)
+
+#Panel del formulario
 panelFormulario = Frame(inicio, bg=BLANCO)
-panelFormulario.pack(side="right", fill="both", expand=True, padx=(8, 15), pady=10)
+panelFormulario.pack(
+    side="right",
+    fill="both",
+    expand=True,
+    padx=(8, 15),
+    pady=10
+)
 
 #Carga del logo
 try:
-    logo = PhotoImage(file="Logo_JF_grande.png").subsample(3, 3)
-    etiquetaLogo = Label(panelLogo, image=logo, bg=CREMA, bd=0)
-    etiquetaLogo.image = logo
+    logo = PhotoImage(file="Logo_JF_grande.png")
+    logo = logo.subsample(3, 3)
+
+    etiquetaLogo = Label(
+        panelLogo,
+        image=logo,
+        bg=CREMA,
+        bd=0
+    )
     etiquetaLogo.pack(expand=True)
-except TclError:
-    etiquetaLogo = Label(panelLogo, text="JOHN'S FRESH", font=("Arial", 26, "bold"), bg=CREMA, fg=CANELA)
+
+except (TclError, RuntimeError):
+    etiquetaLogo = Label(
+        panelLogo,
+        text="John's Fresh",
+        font=("Arial", 27, "bold"),
+        bg=CREMA,
+        fg=CANELA
+    )
     etiquetaLogo.pack(expand=True)
 
 #Título del formulario
-tituloFormulario = Label(panelFormulario, text="Registro de productos", font=("Arial", 17, "bold"), bg=BLANCO, fg=CANELA)
-tituloFormulario.pack(pady=(12, 8))
+tituloFormulario = Label(
+    panelFormulario,
+    text="Registro de productos",
+    font=("Arial", 17, "bold"),
+    bg=BLANCO,
+    fg=CANELA
+)
+tituloFormulario.pack(pady=(20, 15))
 
-#Función para crear las etiquetas del formulario
+#Función para crear etiquetas del formulario
 def crearEtiqueta(texto):
-    return Label(panelFormulario, text=texto, font=("Arial", 10, "bold"), bg=BLANCO, fg=TEXTO)
+    etiqueta = Label(
+        panelFormulario,
+        text=texto,
+        font=("Arial", 10, "bold"),
+        bg=BLANCO,
+        fg=TEXTO,
+        anchor="w"
+    )
+    etiqueta.pack(fill="x", padx=25, pady=(5, 2))
+    return etiqueta
 
-#Función para crear los campos del formulario
+#Función para crear campos de texto
 def crearCampo():
-    return Entry(panelFormulario, font=("Arial", 10), bg=BLANCO, fg=TEXTO, relief="solid", bd=1, highlightbackground=BORDE)
+    return Entry(
+        panelFormulario,
+        font=("Arial", 10),
+        bg=BLANCO,
+        fg=TEXTO,
+        relief="solid",
+        bd=1,
+        highlightbackground=BORDE
+    )
 
-#Campo de ID
-crearEtiqueta("ID del producto").pack(anchor="w", padx=30, pady=(3, 2))
+#Campo ID
+crearEtiqueta("ID del producto")
 cuadroID = crearCampo()
-cuadroID.pack(fill="x", padx=30, ipady=4)
-cuadroID.config(state="readonly")
+cuadroID.pack(fill="x", padx=25, ipady=4)
+cuadroID.configure(state="readonly")
 
-#Campo de nombre
-crearEtiqueta("Nombre del producto *").pack(anchor="w", padx=30, pady=(6, 2))
+#Campo nombre
+crearEtiqueta("Nombre del producto")
 cuadroNombre = crearCampo()
-cuadroNombre.pack(fill="x", padx=30, ipady=4)
+cuadroNombre.pack(fill="x", padx=25, ipady=4)
 
-#Campo de marca
-crearEtiqueta("Marca").pack(anchor="w", padx=30, pady=(6, 2))
+#Campo marca
+crearEtiqueta("Marca")
 cuadroMarca = crearCampo()
-cuadroMarca.pack(fill="x", padx=30, ipady=4)
+cuadroMarca.pack(fill="x", padx=25, ipady=4)
 
-#Campo de cantidad
-crearEtiqueta("Cantidad *").pack(anchor="w", padx=30, pady=(6, 2))
+#Campo cantidad
+crearEtiqueta("Cantidad")
 cuadroCantidad = crearCampo()
-cuadroCantidad.pack(fill="x", padx=30, ipady=4)
+cuadroCantidad.pack(fill="x", padx=25, ipady=4)
 
-#Campo de precio
-crearEtiqueta("Precio unitario *").pack(anchor="w", padx=30, pady=(6, 2))
+#Campo precio
+crearEtiqueta("Precio")
 cuadroPrecio = crearCampo()
-cuadroPrecio.pack(fill="x", padx=30, ipady=4)
+cuadroPrecio.pack(fill="x", padx=25, ipady=4)
 
-#Campo de categoría
-crearEtiqueta("Categoría").pack(anchor="w", padx=30, pady=(6, 2))
+#Campo categoría
+crearEtiqueta("Categoría")
 cuadroCategoria = crearCampo()
-cuadroCategoria.pack(fill="x", padx=30, ipady=4)
+cuadroCategoria.pack(fill="x", padx=25, ipady=4)
 
-#Campo de unidad
-crearEtiqueta("Unidad de medida *").pack(anchor="w", padx=30, pady=(6, 2))
+#Campo unidad
+crearEtiqueta("Unidad de medida")
 cuadroUnidad = crearCampo()
-cuadroUnidad.pack(fill="x", padx=30, ipady=4)
+cuadroUnidad.pack(fill="x", padx=25, ipady=4)
 
-#Función para limpiar los campos
+#Función para limpiar el formulario
 def limpiarCampos():
-    cuadroID.config(state="normal")
+    cuadroID.configure(state="normal")
     cuadroID.delete(0, END)
-    cuadroID.config(state="readonly")
+    cuadroID.configure(state="readonly")
 
-    for cuadro in [cuadroNombre, cuadroMarca, cuadroCantidad, cuadroPrecio, cuadroCategoria, cuadroUnidad]:
-        cuadro.delete(0, END)
+    cuadroNombre.delete(0, END)
+    cuadroMarca.delete(0, END)
+    cuadroCantidad.delete(0, END)
+    cuadroPrecio.delete(0, END)
+    cuadroCategoria.delete(0, END)
+    cuadroUnidad.delete(0, END)
 
-#Diseño de la pestaña Inventario
-tituloInventario = Label(inventario, text="Inventario de productos", font=("Arial", 18, "bold"), bg=CREMA, fg=CANELA)
+#Botón para limpiar el formulario
+botonLimpiar = Button(
+    panelFormulario,
+    text="Limpiar campos",
+    command=limpiarCampos,
+    font=("Arial", 10, "bold"),
+    bg=DURAZNO,
+    fg=TEXTO,
+    activebackground=TERRACOTA,
+    activeforeground=BLANCO,
+    relief="flat",
+    cursor="hand2"
+)
+botonLimpiar.pack(fill="x", padx=25, pady=(15, 20), ipady=5)
+
+#========================================
+#PESTAÑA INVENTARIO
+#========================================
+
+#Título del inventario
+tituloInventario = Label(
+    inventario,
+    text="Inventario de productos",
+    font=("Arial", 18, "bold"),
+    bg=CREMA,
+    fg=CANELA
+)
 tituloInventario.pack(pady=(20, 5))
 
-mensajeInventario = Label(inventario, text="Productos registrados en John’s Fresh", font=("Arial", 11), bg=CREMA, fg=TEXTO)
+mensajeInventario = Label(
+    inventario,
+    text="Productos registrados en John's Fresh",
+    font=("Arial", 11),
+    bg=CREMA,
+    fg=TEXTO
+)
 mensajeInventario.pack(pady=(0, 12))
 
-#Contenedor de la tabla de inventario
+#Panel que contiene la tabla
 panelTabla = Frame(inventario, bg=CREMA)
-panelTabla.pack(fill="both", expand=True, padx=15, pady=(0, 15))
+panelTabla.pack(
+    fill="both",
+    expand=True,
+    padx=15,
+    pady=(0, 15)
+)
 
-#Definición de las columnas de la tabla
-columnas = ("ID", "Nombre", "Marca", "Cantidad", "Precio", "Categoría", "Unidad")
+#Columnas de la tabla
+columnas = (
+    "ID",
+    "Nombre",
+    "Marca",
+    "Cantidad",
+    "Precio",
+    "Categoría",
+    "Unidad"
+)
 
-tablaInventario = ttk.Treeview(panelTabla, columns=columnas, show="headings")
+#Creación de la tabla
+tablaInventario = ttk.Treeview(
+    panelTabla,
+    columns=columnas,
+    show="headings",
+    selectmode="browse"
+)
+
+#Colores otoñales para las filas
+tablaInventario.tag_configure(
+    "fila_clara",
+    background=BLANCO,
+    foreground=TEXTO
+)
+
+tablaInventario.tag_configure(
+    "fila_otoñal",
+    background=DURAZNO_CLARO,
+    foreground=TEXTO
+)
 
 #Configuración de los encabezados y las columnas
-tablaInventario.heading("ID", text="ID")
-tablaInventario.heading("Nombre", text="Nombre")
-tablaInventario.heading("Marca", text="Marca")
-tablaInventario.heading("Cantidad", text="Cantidad")
-tablaInventario.heading("Precio", text="Precio")
-tablaInventario.heading("Categoría", text="Categoría")
-tablaInventario.heading("Unidad", text="Unidad")
+anchos = {
+    "ID": 55,
+    "Nombre": 150,
+    "Marca": 110,
+    "Cantidad": 85,
+    "Precio": 90,
+    "Categoría": 120,
+    "Unidad": 100
+}
 
-tablaInventario.column("ID", width=55, minwidth=45, anchor="center")
-tablaInventario.column("Nombre", width=150, minwidth=100)
-tablaInventario.column("Marca", width=110, minwidth=80)
-tablaInventario.column("Cantidad", width=85, minwidth=70, anchor="center")
-tablaInventario.column("Precio", width=100, minwidth=80, anchor="e")
-tablaInventario.column("Categoría", width=120, minwidth=90)
-tablaInventario.column("Unidad", width=90, minwidth=70)
+for columna in columnas:
+    tablaInventario.heading(
+        columna,
+        text=columna
+    )
 
-#Barras de desplazamiento de la tabla
-barraVertical = ttk.Scrollbar(panelTabla, orient="vertical", command=tablaInventario.yview)
-barraHorizontal = ttk.Scrollbar(panelTabla, orient="horizontal", command=tablaInventario.xview)
+    tablaInventario.column(
+        columna,
+        width=anchos[columna],
+        minwidth=50,
+        anchor="center"
+    )
 
-tablaInventario.configure(yscrollcommand=barraVertical.set, xscrollcommand=barraHorizontal.set)
+#Barras de desplazamiento
+barraVertical = ttk.Scrollbar(
+    panelTabla,
+    orient="vertical",
+    command=tablaInventario.yview
+)
 
-tablaInventario.grid(row=0, column=0, sticky="nsew")
-barraVertical.grid(row=0, column=1, sticky="ns")
-barraHorizontal.grid(row=1, column=0, sticky="ew")
+barraHorizontal = ttk.Scrollbar(
+    panelTabla,
+    orient="horizontal",
+    command=tablaInventario.xview
+)
+
+tablaInventario.configure(
+    yscrollcommand=barraVertical.set,
+    xscrollcommand=barraHorizontal.set
+)
+
+#Ubicación de la tabla y las barras
+tablaInventario.grid(
+    row=0,
+    column=0,
+    sticky="nsew"
+)
+
+barraVertical.grid(
+    row=0,
+    column=1,
+    sticky="ns"
+)
+
+barraHorizontal.grid(
+    row=1,
+    column=0,
+    sticky="ew"
+)
 
 panelTabla.grid_rowconfigure(0, weight=1)
 panelTabla.grid_columnconfigure(0, weight=1)
@@ -188,53 +390,157 @@ def actualizarInventario():
         tablaInventario.delete(fila)
 
     #Agregar los productos registrados a la tabla
+    for indice, producto in enumerate(productos):
+        #Alternar el color según la posición de la fila
+        if indice % 2 == 0:
+            colorFila = "fila_clara"
+        else:
+            colorFila = "fila_otoñal"
+
+        tablaInventario.insert(
+            "",
+            END,
+            values=(
+                producto["ID"],
+                producto["Nombre"],
+                producto["Marca"],
+                f'{producto["Cantidad"]:g}',
+                f'${producto["Precio"]:,.2f}',
+                producto["Categoría"],
+                producto["Unidad"]
+            ),
+            tags=(colorFila,)
+        )
+
+#Función para seleccionar un producto de la tabla
+def seleccionarProducto(event):
+    #Obtener la fila seleccionada
+    seleccion = tablaInventario.selection()
+
+    #Verificar que exista una fila seleccionada
+    if not seleccion:
+        return
+
+    #Obtener los datos de la fila seleccionada
+    valores = tablaInventario.item(
+        seleccion[0],
+        "values"
+    )
+
+    #Obtener el ID del producto seleccionado
+    identificador = int(valores[0])
+
+    #Buscar el producto original en la lista
     for producto in productos:
-        tablaInventario.insert("", END, values=(
-            producto["ID"],
-            producto["Nombre"],
-            producto["Marca"],
-            f'{producto["Cantidad"]:g}',
-            f'${producto["Precio"]:,.2f}',
-            producto["Categoría"],
-            producto["Unidad"]
-        ))
+        if producto["ID"] == identificador:
+            #Cargar el ID en su campo
+            cuadroID.configure(state="normal")
+            cuadroID.delete(0, END)
+            cuadroID.insert(0, producto["ID"])
+            cuadroID.configure(state="readonly")
+
+            #Cargar el nombre
+            cuadroNombre.delete(0, END)
+            cuadroNombre.insert(0, producto["Nombre"])
+
+            #Cargar la marca
+            cuadroMarca.delete(0, END)
+            cuadroMarca.insert(0, producto["Marca"])
+
+            #Cargar la cantidad
+            cuadroCantidad.delete(0, END)
+            cuadroCantidad.insert(
+                0,
+                f'{producto["Cantidad"]:g}'
+            )
+
+            #Cargar el precio
+            cuadroPrecio.delete(0, END)
+            cuadroPrecio.insert(
+                0,
+                f'{producto["Precio"]:g}'
+            )
+
+            #Cargar la categoría
+            cuadroCategoria.delete(0, END)
+            cuadroCategoria.insert(
+                0,
+                producto["Categoría"]
+            )
+
+            #Cargar la unidad
+            cuadroUnidad.delete(0, END)
+            cuadroUnidad.insert(
+                0,
+                producto["Unidad"]
+            )
+
+            #Cambiar a la pestaña del formulario
+            pestania.select(inicio)
+
+            break
+
+#Detectar cuando el usuario selecciona una fila
+tablaInventario.bind(
+    "<<TreeviewSelect>>",
+    seleccionarProducto
+)
+
+#========================================
+#REGISTRO DE PRODUCTOS
+#========================================
 
 #Función para registrar un producto
 def registrarProducto():
     global siguienteID
 
+    #Obtener los datos del formulario
     nombre = cuadroNombre.get().strip()
     marca = cuadroMarca.get().strip()
-    cantidadTexto = cuadroCantidad.get().strip().replace(",", ".")
-    precioTexto = cuadroPrecio.get().strip().replace(",", ".")
+    cantidadTexto = cuadroCantidad.get().strip()
+    precioTexto = cuadroPrecio.get().strip()
     categoria = cuadroCategoria.get().strip()
     unidad = cuadroUnidad.get().strip()
 
-    #Validar campos obligatorios
+    #Validar los campos obligatorios
     if not nombre or not cantidadTexto or not precioTexto or not unidad:
-        messagebox.showwarning("Campos incompletos", "Completa el nombre, la cantidad, el precio y la unidad de medida.")
+        messagebox.showwarning(
+            "Campos obligatorios",
+            "Completa el nombre, la cantidad, el precio y la unidad."
+        )
         return
 
-    #Validar que cantidad y precio sean números
+    #Validar los datos numéricos
     try:
-        cantidad = float(cantidadTexto)
-        precio = float(precioTexto)
+        cantidad = float(cantidadTexto.replace(",", "."))
+        precio = float(precioTexto.replace(",", "."))
     except ValueError:
-        messagebox.showerror("Datos incorrectos", "La cantidad y el precio deben ser valores numéricos.")
+        messagebox.showerror(
+            "Datos inválidos",
+            "La cantidad y el precio deben ser números válidos."
+        )
         return
 
-    #Validar valores permitidos
+    #Comprobar que la cantidad sea positiva
     if cantidad <= 0:
-        messagebox.showwarning("Cantidad incorrecta", "La cantidad debe ser mayor que cero.")
+        messagebox.showwarning(
+            "Cantidad inválida",
+            "La cantidad debe ser mayor que cero."
+        )
         return
 
+    #Comprobar que el precio no sea negativo
     if precio < 0:
-        messagebox.showwarning("Precio incorrecto", "El precio no puede ser negativo.")
+        messagebox.showwarning(
+            "Precio inválido",
+            "El precio no puede ser negativo."
+        )
         return
 
-    #Asignar ID y crear el producto
+    #Generar el ID del nuevo producto
     identificador = siguienteID
 
+    #Crear el producto
     producto = {
         "ID": identificador,
         "Nombre": nombre,
@@ -245,48 +551,91 @@ def registrarProducto():
         "Unidad": unidad
     }
 
-    #Guardar el producto en la lista temporal
+    #Guardar el producto en la lista
     productos.append(producto)
-
-    #Actualizar el siguiente ID disponible
     siguienteID += 1
 
     #Actualizar la tabla de inventario
     actualizarInventario()
 
     #Mostrar el ID asignado
-    cuadroID.config(state="normal")
+    cuadroID.configure(state="normal")
     cuadroID.delete(0, END)
     cuadroID.insert(0, identificador)
-    cuadroID.config(state="readonly")
+    cuadroID.configure(state="readonly")
 
-    messagebox.showinfo("Registro exitoso", f"El producto '{nombre}' se registró correctamente.\nID asignado: {identificador}")
+    #Mostrar mensaje de confirmación
+    messagebox.showinfo(
+        "Producto registrado",
+        f"El producto '{nombre}' se registró correctamente.\nID: {identificador}"
+    )
 
+    #Limpiar el formulario
     limpiarCampos()
 
-#Botones del formulario
-panelBotones = Frame(panelFormulario, bg=BLANCO)
-panelBotones.pack(pady=12)
+#Botón para registrar productos
+botonRegistrar = Button(
+    panelFormulario,
+    text="Registrar producto",
+    command=registrarProducto,
+    font=("Arial", 10, "bold"),
+    bg=CANELA,
+    fg=BLANCO,
+    activebackground=TERRACOTA,
+    activeforeground=BLANCO,
+    relief="flat",
+    cursor="hand2"
+)
+botonRegistrar.pack(
+    fill="x",
+    padx=25,
+    pady=(0, 5),
+    ipady=5
+)
 
-botonRegistrar = Button(panelBotones, text="Registrar producto", command=registrarProducto, bg=CANELA, fg=BLANCO, activebackground=TERRACOTA, activeforeground=BLANCO, font=("Arial", 10, "bold"), relief="flat", cursor="hand2", padx=12, pady=8)
-botonRegistrar.pack(side="left", padx=5)
+#========================================
+#PESTAÑA VENTAS
+#========================================
 
-botonLimpiar = Button(panelBotones, text="Limpiar campos", command=limpiarCampos, bg=DURAZNO, fg=TEXTO, activebackground=TERRACOTA, activeforeground=BLANCO, font=("Arial", 10, "bold"), relief="flat", cursor="hand2", padx=12, pady=8)
-botonLimpiar.pack(side="left", padx=5)
+tituloVentas = Label(
+    ventas,
+    text="Ventas",
+    font=("Arial", 20, "bold"),
+    bg=CREMA,
+    fg=CANELA
+)
+tituloVentas.pack(pady=(40, 10))
 
-#Diseño de la pestaña Ventas
-tituloVentas = Label(ventas, text="Registro de ventas", font=("Arial", 18, "bold"), bg=CREMA, fg=CANELA)
-tituloVentas.pack(pady=30)
+mensajeVentas = Label(
+    ventas,
+    text="Aquí construiremos el módulo de ventas y tickets.",
+    font=("Arial", 11),
+    bg=CREMA,
+    fg=TEXTO
+)
+mensajeVentas.pack(pady=5)
 
-mensajeVentas = Label(ventas, text="Aquí se realizará la selección de productos y el cálculo de las ventas.", font=("Arial", 11), bg=CREMA, fg=TEXTO)
-mensajeVentas.pack(pady=10)
+#========================================
+#PESTAÑA CLIENTES
+#========================================
 
-#Diseño de la pestaña Clientes
-tituloClientes = Label(clientes, text="Registro de clientes", font=("Arial", 18, "bold"), bg=CREMA, fg=CANELA)
-tituloClientes.pack(pady=30)
+tituloClientes = Label(
+    clientes,
+    text="Clientes",
+    font=("Arial", 20, "bold"),
+    bg=CREMA,
+    fg=CANELA
+)
+tituloClientes.pack(pady=(40, 10))
 
-mensajeClientes = Label(clientes, text="Aquí se registrará la información de los clientes.", font=("Arial", 11), bg=CREMA, fg=TEXTO)
-mensajeClientes.pack(pady=10)
+mensajeClientes = Label(
+    clientes,
+    text="Aquí construiremos el registro y la gestión de clientes.",
+    font=("Arial", 11),
+    bg=CREMA,
+    fg=TEXTO
+)
+mensajeClientes.pack(pady=5)
 
-#Iniciar la aplicación
+#Inicio del programa
 raiz.mainloop()
