@@ -4,7 +4,7 @@ from tkinter import messagebox  #Importa ventanas emergentes para mostrar mensaj
 from tkinter import filedialog  #Permite elegir dónde guardar los tickets
 from datetime import datetime   #Permite obtener la fecha y hora de cada venta
 
-#Configuración de los colores para el sistema
+#Configuración de los colores para el sistema*
 CANELA = "#713F35"
 TERRACOTA = "#A65D45"
 DURAZNO = "#E8B99A"
