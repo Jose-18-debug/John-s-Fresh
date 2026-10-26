@@ -13,10 +13,13 @@ BLANCO = "#FFF9F2"
 TEXTO = "#49312B"
 BORDE = "#D3A18A"
 DURAZNO_CLARO = "#F0D9C5"
-FONDO = "#D7B58D"  # Fondo exterior: otoño más intenso
+FONDO = "#D7B58D"  # Fondo exterior, otoño más intenso
 CONTENIDO = "#F4E7D0"  # Interior de las pestañas: tono más claro
-FONDO_TICKET = "#E5BD91"  # Ventana del ticket: durazno otoñal
+FONDO_TICKET = "#E5BD91"  # Ventana del ticket, durazno otoñal
 ROJO = "#A64035"
+FONDO_LOGO = "#F8F0D8"
+FUENTE_GENERAL = "Trebuchet MS"
+FUENTE_TITULOS = "Arial Rounded MT Bold"
 
 #Listas temporales para los productos y la venta actual
 productos = [
@@ -43,8 +46,7 @@ productos = [
     {"ID": 21, "Nombre": "Galletas", "Marca": "Gamesa", "Cantidad": 20, "Precio": 17.00, "Categoría": "Botanas y Dulces", "Unidad": "Paquetes"},
     {"ID": 22, "Nombre": "Detergente", "Marca": "Ariel", "Cantidad": 12, "Precio": 38.00, "Categoría": "Productos de Limpieza", "Unidad": "Paquetes"},
     {"ID": 23, "Nombre": "Jabón de baño", "Marca": "Zest", "Cantidad": 20, "Precio": 16.00, "Categoría": "Higiene Personal", "Unidad": "Piezas"},
-    {"ID": 24, "Nombre": "Esponja para trastes", "Marca": "Scotch-Brite", "Cantidad": 15, "Precio": 15.00, "Categoría": "Productos de Cocina", "Unidad": "Piezas"}
-]
+    {"ID": 24, "Nombre": "Esponja para trastes", "Marca": "Scotch-Brite", "Cantidad": 15, "Precio": 15.00, "Categoría": "Productos de Cocina", "Unidad": "Piezas"}]
 
 siguienteID = len(productos) + 1
 productoSeleccionadoID = None
@@ -58,8 +60,8 @@ clientesRegistrados = [
     {"ID": 4, "Nombre": "Luis Alberto Pérez", "Telefono": "771 100 2004", "Fecha": "", "Direccion": "Iturbe, Tula de Allende"},
     {"ID": 5, "Nombre": "Sofía García Torres", "Telefono": "771 100 2005", "Fecha": "", "Direccion": "Bomintzhá, Tula de Allende"},
     {"ID": 6, "Nombre": "José Manuel Sánchez", "Telefono": "771 100 2006", "Fecha": "", "Direccion": "Nantzha, Tula de Allende"},
-    {"ID": 7, "Nombre": "Valeria Ramírez Flores", "Telefono": "771 100 2007", "Fecha": "", "Direccion": "Xochitlán, Tula de Allende"},
-]
+    {"ID": 7, "Nombre": "Valeria Ramírez Flores", "Telefono": "771 100 2007", "Fecha": "", "Direccion": "Xochitlán, Tula de Allende"},]
+
 siguienteIDCliente = len(clientesRegistrados) + 1
 clienteSeleccionadoID = None
 ventasRegistradas = []  # Conserva el historial de ventas durante la sesión
@@ -73,14 +75,12 @@ categorias = [
     "Bebidas", "Botanas y Dulces", "Productos de Limpieza",
     "Productos de Cocina", "Carnes y Embutidos", "Abarrotes",
     "Enlatados", "Condimentos y Especias", "Higiene Personal",
-    "Congelados", "Otros"
-]
+    "Congelados", "Otros"]
 
 unidades = [
     "Piezas", "Kilogramos", "Gramos", "Litros",
     "Paquetes", "Cajas", "Botellas", "Latas",
-    "Docenas", "Rollos"
-]
+    "Docenas", "Rollos"]
 
 #Configuración de la ventana principal
 raiz = Tk()
@@ -111,12 +111,12 @@ estilo.map("Treeview", background=[("selected", TERRACOTA)],
     foreground=[("selected", BLANCO)])
 
 #Encabezado principal
-titulo = Label(raiz, text="John's Fresh", font=("Arial", 24, "bold"),
-    bg=CONTENIDO, fg=CANELA)
+titulo = Label(raiz, text="John's Fresh", font=(FUENTE_TITULOS, 24, "bold"),
+    bg=FONDO, fg=CANELA, bd=0)
 titulo.pack(pady=(10, 0))
 
 subtitulo = Label(raiz, text="Sistema de punto de venta e inventario",
-    font=("Arial", 10), bg=CONTENIDO, fg=TEXTO)
+    font=(FUENTE_GENERAL, 10), bg=FONDO, fg=TEXTO, bd=0)
 subtitulo.pack(pady=(0, 10))
 
 #Creación de las pestañas principales
@@ -135,23 +135,28 @@ pestania.add(clientes, text="Clientes")
 
 #PESTAÑA INICIO
 #Panel del logo
-panelLogo = Frame(inicio, bg=CONTENIDO)
+panelLogo = Frame(inicio, bg=FONDO_LOGO, bd=0, highlightthickness=0)
 panelLogo.pack(side="left", fill="both", expand=True, padx=(15, 8), pady=10)
 
 #Panel del formulario
 panelFormulario = Frame(inicio, bg=BLANCO)
 panelFormulario.pack(side="right", fill="both", expand=True, padx=(8, 15), pady=10)
 
-#Carga del logo
+# Carga del logo en la pestaña Inicio
 try:
     logo = PhotoImage(file="Logo_JF_grande.png")
     logo = logo.subsample(3, 3)
-    etiquetaLogo = Label(panelLogo, image=logo, bg=CONTENIDO, bd=0)
+
+    etiquetaLogo = Label(panelLogo, image=logo, bg=FONDO_LOGO,
+        bd=0, highlightthickness=0)
     etiquetaLogo.pack(expand=True)
-except (TclError, RuntimeError):
-    etiquetaLogo = Label(panelLogo, text="John's Fresh",
-        font=("Arial", 27, "bold"), bg=CONTENIDO, fg=CANELA)
+
+except (TclError, RuntimeError) as error:
+    etiquetaLogo = Label(panelLogo, text="John's Fresh", font=("Arial", 27, "bold"),
+        bg=FONDO_LOGO, fg=CANELA)
     etiquetaLogo.pack(expand=True)
+
+    print("No se pudo cargar el logo:", error)
 
 #Título del formulario
 tituloFormulario = Label(panelFormulario, text="Registro de productos",
@@ -238,10 +243,8 @@ barraVertical = ttk.Scrollbar(panelTabla, orient="vertical",
 barraHorizontal = ttk.Scrollbar(panelTabla, orient="horizontal",
     command=tablaInventario.xview)
 
-tablaInventario.configure(
-    yscrollcommand=barraVertical.set,
-    xscrollcommand=barraHorizontal.set
-)
+tablaInventario.configure(yscrollcommand=barraVertical.set,
+    xscrollcommand=barraHorizontal.set)
 
 tablaInventario.grid(row=0, column=0, sticky="nsew")
 barraVertical.grid(row=0, column=1, sticky="ns")
@@ -262,19 +265,13 @@ mensajeVentas.pack(pady=(0, 6))
 #Panel para relacionar la venta con un cliente registrado
 panelClienteVenta = Frame(ventas, bg=BLANCO)
 panelClienteVenta.pack(fill="x", padx=12, pady=(0, 5))
-Label(panelClienteVenta, text="Cliente de esta venta",
-    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).pack(
+Label(panelClienteVenta, text="Cliente de esta venta", font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).pack(
     side="left", padx=(10, 8), pady=6)
-comboClienteVenta = ttk.Combobox(panelClienteVenta, state="readonly",
-    width=55, font=("Arial", 9))
+comboClienteVenta = ttk.Combobox(panelClienteVenta, state="readonly", width=55, font=("Arial", 9))
 comboClienteVenta.pack(side="left", fill="x", expand=True, padx=(0, 8), pady=5)
-botonNuevoClienteVenta = Button(
-    panelClienteVenta, text="＋ Nuevo cliente",
-    command=lambda: registrarClienteDesdeVentas(),
-    font=("Arial", 9, "bold"), bg=DURAZNO, fg=CANELA,
-    activebackground=DURAZNO_CLARO, activeforeground=CANELA,
-    relief="flat", cursor="hand2"
-)
+botonNuevoClienteVenta = Button(panelClienteVenta, text="＋ Nuevo cliente",
+    command=lambda: registrarClienteDesdeVentas(), font=("Arial", 9, "bold"), bg=DURAZNO, fg=CANELA,
+    activebackground=DURAZNO_CLARO, activeforeground=CANELA, relief="flat", cursor="hand2")
 botonNuevoClienteVenta.pack(side="right", padx=(0, 8), pady=4, ipady=3, ipadx=5)
 
 #Panel para seleccionar productos
@@ -308,8 +305,7 @@ panelCarrito = Frame(ventas, bg=CONTENIDO)
 panelCarrito.pack(fill="both", expand=True, padx=12, pady=(0, 3))
 
 columnasVenta = ("ID", "Nombre", "Cantidad", "Precio unitario", "Importe")
-tablaVenta = ttk.Treeview(panelCarrito, columns=columnasVenta,
-    show="headings", selectmode="browse", height=4)
+tablaVenta = ttk.Treeview(panelCarrito, columns=columnasVenta, show="headings", selectmode="browse", height=4)
 
 anchosVenta = {
     "ID": 45, "Nombre": 200, "Cantidad": 75,
@@ -353,19 +349,15 @@ etiquetaTotal.pack(anchor="e", padx=12, pady=(1, 3))
 panelPago = Frame(panelTotales, bg=BLANCO)
 panelPago.pack(fill="x", padx=12, pady=(0, 5))
 
-Label(panelPago, text="Efectivo recibido: $",
-    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).pack(side="left")
+Label(panelPago, text="Efectivo recibido: $", font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).pack(side="left")
 
-cuadroEfectivo = Entry(panelPago, font=("Arial", 9),
-    width=12, bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
+cuadroEfectivo = Entry(panelPago, font=("Arial", 9), width=12, bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
 cuadroEfectivo.pack(side="left", padx=(4, 8), ipady=2)
 
-etiquetaCambio = Label(panelPago, text="Cambio: $0.00",
-    font=("Arial", 10, "bold"), bg=BLANCO, fg=CANELA)
+etiquetaCambio = Label(panelPago, text="Cambio: $0.00", font=("Arial", 10, "bold"), bg=BLANCO, fg=CANELA)
 etiquetaCambio.pack(side="left", padx=4)
 
 #FUNCIONES DEL INVENTARIO Y LAS VENTAS
-
 #Actualizar las opciones de productos disponibles
 def actualizarSelectorVentas():
     opciones = []
@@ -473,8 +465,7 @@ def obtenerDatosFormulario():
     if not nombre or not cantidadTexto or not precioTexto or not categoria or not unidad:
         messagebox.showwarning(
             "Campos obligatorios",
-            "Completa el nombre, la cantidad, el precio, la categoría y la unidad."
-        )
+            "Completa el nombre, la cantidad, el precio, la categoría y la unidad.")
         return None
 
     try:
@@ -483,22 +474,19 @@ def obtenerDatosFormulario():
     except ValueError:
         messagebox.showerror(
             "Datos inválidos",
-            "La cantidad y el precio deben ser números válidos."
-        )
+            "La cantidad y el precio deben ser números válidos.")
         return None
 
     if cantidad <= 0:
         messagebox.showwarning(
             "Cantidad inválida",
-            "La cantidad debe ser mayor que cero."
-        )
+            "La cantidad debe ser mayor que cero.")
         return None
 
     if precio < 0:
         messagebox.showwarning(
             "Precio inválido",
-            "El precio no puede ser negativo."
-        )
+            "El precio no puede ser negativo.")
         return None
 
     return {
@@ -517,8 +505,7 @@ def registrarProducto():
     if productoSeleccionadoID is not None:
         messagebox.showwarning(
             "Producto seleccionado",
-            "Estás editando un producto existente. Pulsa Guardar cambios o Limpiar campos antes de registrar otro."
-        )
+            "Estás editando un producto existente. Pulsa Guardar cambios o Limpiar campos antes de registrar otro.")
         return
 
     datos = obtenerDatosFormulario()
@@ -534,8 +521,7 @@ def registrarProducto():
 
     messagebox.showinfo(
         "Producto registrado",
-        f'El producto "{producto["Nombre"]}" se registró correctamente.\nID: {identificador}'
-    )
+        f'El producto "{producto["Nombre"]}" se registró correctamente.\nID: {identificador}')
 
     limpiarCampos()
 
@@ -544,8 +530,7 @@ def guardarCambios():
     if productoSeleccionadoID is None:
         messagebox.showwarning(
             "Selecciona un producto",
-            "Selecciona un producto del inventario antes de guardar cambios."
-        )
+            "Selecciona un producto del inventario antes de guardar cambios.")
         return
 
     datos = obtenerDatosFormulario()
@@ -559,8 +544,7 @@ def guardarCambios():
     else:
         messagebox.showerror(
             "Producto no encontrado",
-            "No se encontró el producto que deseas modificar."
-        )
+            "No se encontró el producto que deseas modificar.")
         return
 
     actualizarInventario()
@@ -568,16 +552,14 @@ def guardarCambios():
 
     messagebox.showinfo(
         "Cambios guardados",
-        "El producto se actualizó correctamente."
-    )
+        "El producto se actualizó correctamente.")
 
 #Abrir Inicio para editar un producto
 def irAEditar():
     if productoSeleccionadoID is None:
         messagebox.showwarning(
             "Selecciona un producto",
-            "Primero selecciona un producto de la tabla."
-        )
+            "Primero selecciona un producto de la tabla.")
         return
 
     pestania.select(inicio)
@@ -589,34 +571,29 @@ def eliminarProducto():
     if productoSeleccionadoID is None:
         messagebox.showwarning(
             "Selecciona un producto",
-            "Selecciona en la tabla el producto que deseas eliminar."
-        )
+            "Selecciona en la tabla el producto que deseas eliminar.")
         return
 
     productoEliminar = next(
         (p for p in productos if p["ID"] == productoSeleccionadoID),
-        None
-    )
+        None)
 
     if productoEliminar is None:
         messagebox.showerror(
             "Producto no encontrado",
-            "No se encontró el producto seleccionado."
-        )
+            "No se encontró el producto seleccionado.")
         return
 
     if productoEliminar["ID"] in carritoVentas:
         messagebox.showwarning(
             "Producto en venta",
-            "No puedes eliminar un producto que está agregado a la venta actual."
-        )
+            "No puedes eliminar un producto que está agregado a la venta actual.")
         return
 
     confirmar = messagebox.askyesno(
         "Confirmar eliminación",
         f'¿Seguro que deseas eliminar "{productoEliminar["Nombre"]}"?\n\n'
-        "Los IDs restantes se reorganizarán automáticamente."
-    )
+        "Los IDs restantes se reorganizarán automáticamente.")
 
     if not confirmar:
         return
@@ -648,8 +625,7 @@ def eliminarProducto():
 
     messagebox.showinfo(
         "Producto eliminado",
-        "El producto se eliminó correctamente y los IDs se reorganizaron."
-    )
+        "El producto se eliminó correctamente y los IDs se reorganizaron.")
 
 #Agregar un producto a la venta actual
 def agregarProductoVenta():
@@ -658,8 +634,7 @@ def agregarProductoVenta():
     if not seleccion:
         messagebox.showwarning(
             "Selecciona un producto",
-            "Selecciona un producto disponible."
-        )
+            "Selecciona un producto disponible.")
         return
 
     try:
@@ -668,27 +643,22 @@ def agregarProductoVenta():
     except ValueError:
         messagebox.showerror(
             "Datos inválidos",
-            "Ingresa una cantidad numérica válida."
-        )
+            "Ingresa una cantidad numérica válida.")
         return
 
     if cantidad <= 0:
         messagebox.showwarning(
             "Cantidad inválida",
-            "La cantidad debe ser mayor que cero."
-        )
+            "La cantidad debe ser mayor que cero.")
         return
 
     producto = next(
-        (p for p in productos if p["ID"] == identificador),
-        None
-    )
+        (p for p in productos if p["ID"] == identificador), None)
 
     if producto is None:
         messagebox.showerror(
             "Producto no encontrado",
-            "El producto ya no está disponible en el inventario."
-        )
+            "El producto ya no está disponible en el inventario.")
         actualizarSelectorVentas()
         return
 
@@ -699,8 +669,7 @@ def agregarProductoVenta():
     if cantidadActual + cantidad > producto["Cantidad"]:
         messagebox.showwarning(
             "Existencias insuficientes",
-            f'Hay {producto["Cantidad"]:g} unidades disponibles y ya agregaste {cantidadActual:g} a la venta.'
-        )
+            f'Hay {producto["Cantidad"]:g} unidades disponibles y ya agregaste {cantidadActual:g} a la venta.')
         return
 
     if identificador in carritoVentas:
@@ -734,8 +703,7 @@ def actualizarTablaVenta():
 
         tablaVenta.insert("", END, values=(
             item["ID"], item["Nombre"], f'{item["Cantidad"]:g}',
-            f'${item["Precio"]:,.2f}', f'${importe:,.2f}'
-        ))
+            f'${item["Precio"]:,.2f}', f'${importe:,.2f}'))
 
     iva = subtotal * 0.16
     total = subtotal + iva
@@ -751,8 +719,7 @@ def quitarProductoVenta():
     if not seleccion:
         messagebox.showwarning(
             "Selecciona un producto",
-            "Selecciona en la tabla el producto que deseas quitar."
-        )
+            "Selecciona en la tabla el producto que deseas quitar.")
         return
 
     valores = tablaVenta.item(seleccion[0], "values")
@@ -800,8 +767,7 @@ def generarTextoTicket(folio, fecha, articulos, subtotal, iva,
 
         lineas.append(nombre[:ancho])
         lineas.append(
-            f"  {cantidad:g} {unidad} x ${precio:,.2f}"
-        )
+            f"  {cantidad:g} {unidad} x ${precio:,.2f}")
         lineas.append(f"  Importe: ${importe:,.2f}")
 
     lineas.append("-" * ancho)
@@ -823,13 +789,9 @@ def generarTextoTicket(folio, fecha, articulos, subtotal, iva,
 
 #Guardar el ticket como archivo de texto
 def guardarTicket(textoTicket, folio, ventanaTicket):
-    ruta = filedialog.asksaveasfilename(
-        parent=ventanaTicket,
-        title="Guardar ticket de venta",
-        initialfile=f"Ticket_JohnsFresh_{folio:04d}.txt",
-        defaultextension=".txt",
-        filetypes=[("Archivo de texto", "*.txt")]
-    )
+    ruta = filedialog.asksaveasfilename(parent=ventanaTicket, title="Guardar ticket de venta",
+        initialfile=f"Ticket_JohnsFresh_{folio:04d}.txt", defaultextension=".txt",
+        filetypes=[("Archivo de texto", "*.txt")])
 
     if not ruta:
         return
@@ -838,18 +800,12 @@ def guardarTicket(textoTicket, folio, ventanaTicket):
         with open(ruta, "w", encoding="utf-8") as archivo:
             archivo.write(textoTicket)
 
-        messagebox.showinfo(
-            "Ticket guardado",
-            f"El ticket se guardó correctamente en:\n{ruta}",
-            parent=ventanaTicket
-        )
+        messagebox.showinfo("Ticket guardado",f"El ticket se guardó correctamente en:\n{ruta}",
+            parent=ventanaTicket)
 
     except OSError as error:
-        messagebox.showerror(
-            "Error al guardar",
-            f"No fue posible guardar el ticket.\n\n{error}",
-            parent=ventanaTicket
-        )
+        messagebox.showerror("Error al guardar",
+            f"No fue posible guardar el ticket.\n\n{error}", parent=ventanaTicket)
 
 
 
@@ -877,85 +833,40 @@ def mostrarTicket(textoTicket, folio):
         logoTicket = PhotoImage(file="Logo_JF_grande.png")
         logoTicket = logoTicket.subsample(9, 9)
 
-        etiquetaLogoTicket = Label(
-            panelSuperior,
-            image=logoTicket,
-            bg=FONDO_TICKET,
-            bd=0
-        )
+        etiquetaLogoTicket = Label(panelSuperior, image=logoTicket,
+            bg=FONDO_TICKET, bd=0)
         etiquetaLogoTicket.pack()
 
         #Conservar la referencia de la imagen
         ventanaTicket.logoTicket = logoTicket
 
     except (TclError, RuntimeError):
-        etiquetaLogoTicket = Label(
-            panelSuperior,
-            text="John's Fresh",
-            font=("Arial", 18, "bold"),
-            bg=FONDO_TICKET,
-            fg=CANELA
-        )
+        etiquetaLogoTicket = Label(panelSuperior, text="John's Fresh",
+            font=("Arial", 18, "bold"), bg=FONDO_TICKET, fg=CANELA)
         etiquetaLogoTicket.pack()
 
     #Título de confirmación
-    tituloTicket = Label(
-        panelSuperior,
-        text="¡Venta finalizada correctamente!",
-        font=("Arial", 12, "bold"),
-        bg=FONDO_TICKET,
-        fg=CANELA
-    )
+    tituloTicket = Label(panelSuperior, text="¡Venta finalizada correctamente!",
+        font=("Arial", 12, "bold"), bg=FONDO_TICKET, fg=CANELA)
     tituloTicket.pack(pady=(4, 2))
 
     #Número del ticket
-    mensajeTicket = Label(
-        panelSuperior,
-        text=f"Ticket de venta #{folio}",
-        font=("Arial", 10),
-        bg=FONDO_TICKET,
-        fg=TEXTO
-    )
+    mensajeTicket = Label(panelSuperior, text=f"Ticket de venta #{folio}", font=("Arial", 10),
+        bg=FONDO_TICKET, fg=TEXTO)
     mensajeTicket.pack(pady=(0, 5))
 
     #Panel del contenido del ticket
-    panelContenido = Frame(
-        ventanaTicket,
-        bg=BLANCO,
-        bd=1,
-        relief="solid"
-    )
-    panelContenido.pack(
-        fill="both",
-        expand=True,
-        padx=15,
-        pady=(3, 8)
-    )
+    panelContenido = Frame(ventanaTicket, bg=BLANCO, bd=1, relief="solid")
+    panelContenido.pack(fill="both", expand=True, padx=15, pady=(3, 8))
 
     #Barra de desplazamiento vertical
-    scrollTicket = Scrollbar(
-        panelContenido,
-        orient=VERTICAL
-    )
+    scrollTicket = Scrollbar(panelContenido, orient=VERTICAL)
     scrollTicket.pack(side=RIGHT, fill=Y)
 
     #Área de texto del ticket
-    areaTicket = Text(
-        panelContenido,
-        font=("Courier New", 9),
-        bg=BLANCO,
-        fg=TEXTO,
-        wrap="word",
-        padx=10,
-        pady=8,
-        bd=0,
-        yscrollcommand=scrollTicket.set
-    )
-    areaTicket.pack(
-        side=LEFT,
-        fill="both",
-        expand=True
-    )
+    areaTicket = Text(panelContenido, font=("Courier New", 9), bg=BLANCO,
+        fg=TEXTO, wrap="word", padx=10, pady=8, bd=0, yscrollcommand=scrollTicket.set)
+    areaTicket.pack(side=LEFT, fill="both", expand=True)
 
     scrollTicket.config(command=areaTicket.yview)
 
@@ -967,52 +878,20 @@ def mostrarTicket(textoTicket, folio):
 
     #Panel inferior para los botones
     #Se mantiene separado del área de texto
-    panelBotones = Frame(
-        ventanaTicket,
-        bg=FONDO_TICKET
-    )
-    panelBotones.pack(
-        side=BOTTOM,
-        fill="x",
-        pady=(0, 12)
-    )
+    panelBotones = Frame(ventanaTicket, bg=FONDO_TICKET)
+    panelBotones.pack(side=BOTTOM, fill="x", pady=(0, 12))
 
     #Botón para guardar el ticket
-    botonGuardarTicket = Button(
-        panelBotones,
-        text="Guardar ticket .txt",
-        font=("Arial", 10, "bold"),
-        bg=CANELA,
-        fg=BLANCO,
-        activebackground=TERRACOTA,
-        activeforeground=BLANCO,
-        relief="flat",
-        cursor="hand2",
-        padx=12,
-        pady=7,
-        command=lambda: guardarTicket(
-            textoTicket,
-            folio,
-            ventanaTicket
-        )
-    )
+    botonGuardarTicket = Button(panelBotones, text="Guardar ticket .txt",
+        font=("Arial", 10, "bold"), bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
+        activeforeground=BLANCO, relief="flat", cursor="hand2", padx=12,
+        pady=7, command=lambda: guardarTicket(textoTicket, folio, ventanaTicket))
     botonGuardarTicket.pack(side=LEFT, padx=(15, 6))
 
     #Botón para cerrar la ventana
-    botonCerrarTicket = Button(
-        panelBotones,
-        text="Cerrar",
-        font=("Arial", 10, "bold"),
-        bg=DURAZNO,
-        fg=TEXTO,
-        activebackground=DURAZNO_CLARO,
-        activeforeground=TEXTO,
-        relief="flat",
-        cursor="hand2",
-        padx=18,
-        pady=7,
-        command=ventanaTicket.destroy
-    )
+    botonCerrarTicket = Button(panelBotones, text="Cerrar", font=("Arial", 10, "bold"),
+        bg=DURAZNO, fg=TEXTO, activebackground=DURAZNO_CLARO, activeforeground=TEXTO,
+        relief="flat", cursor="hand2", padx=18, pady=7, command=ventanaTicket.destroy)
     botonCerrarTicket.pack(side=RIGHT, padx=(6, 15))
 
     #Mantener la ventana al frente
@@ -1045,36 +924,26 @@ def finalizarVenta():
             return
 
     if not carritoVentas:
-        messagebox.showwarning(
-            "Venta vacía",
-            "Agrega al menos un producto antes de finalizar la venta."
-        )
+        messagebox.showwarning("Venta vacía",
+            "Agrega al menos un producto antes de finalizar la venta.")
         return
 
     #Verificar todas las existencias antes de descontar cualquier cantidad
     for identificador, item in carritoVentas.items():
-        producto = next(
-            (p for p in productos if p["ID"] == identificador),
-            None
-        )
+        producto = next((p for p in productos if p["ID"] == identificador), None)
 
         if producto is None:
-            messagebox.showerror(
-                "Producto no encontrado",
-                f'El producto "{item["Nombre"]}" ya no existe en el inventario.'
-            )
+            messagebox.showerror("Producto no encontrado",
+                f'El producto "{item["Nombre"]}" ya no existe en el inventario.')
             return
 
         if item["Cantidad"] > producto["Cantidad"]:
-            messagebox.showwarning(
-                "Existencias insuficientes",
-                f'Ya no hay suficientes unidades de "{producto["Nombre"]}". Actualiza la venta antes de continuar.'
-            )
+            messagebox.showwarning("Existencias insuficientes",
+                f'Ya no hay suficientes unidades de "{producto["Nombre"]}". Actualiza la venta antes de continuar.')
             return
 
     #Calcular subtotal, IVA y total
-    subtotal = sum(
-        item["Cantidad"] * item["Precio"]
+    subtotal = sum(item["Cantidad"] * item["Precio"]
         for item in carritoVentas.values()
     )
 
@@ -1085,36 +954,25 @@ def finalizarVenta():
     efectivoTexto = cuadroEfectivo.get().strip().replace(",", ".")
 
     if not efectivoTexto:
-        messagebox.showwarning(
-            "Falta el pago",
-            "Ingresa el efectivo recibido del cliente."
-        )
+        messagebox.showwarning("Falta el pago","Ingresa el efectivo recibido del cliente.")
         cuadroEfectivo.focus_set()
         return
 
     try:
         efectivo = float(efectivoTexto)
     except ValueError:
-        messagebox.showerror(
-            "Pago inválido",
-            "Ingresa una cantidad de efectivo válida."
-        )
+        messagebox.showerror("Pago inválido", "Ingresa una cantidad de efectivo válida.")
         cuadroEfectivo.focus_set()
         return
 
     if efectivo < 0:
-        messagebox.showwarning(
-            "Pago inválido",
-            "El efectivo recibido no puede ser negativo."
-        )
+        messagebox.showwarning("Pago inválido","El efectivo recibido no puede ser negativo.")
         return
 
     if efectivo < total:
-        messagebox.showwarning(
-            "Efectivo insuficiente",
+        messagebox.showwarning("Efectivo insuficiente",
             f'El total es ${total:,.2f} y el cliente entregó ${efectivo:,.2f}.\n'
-            f'Faltan ${total - efectivo:,.2f}.'
-        )
+            f'Faltan ${total - efectivo:,.2f}.')
         return
 
     cambio = efectivo - total
@@ -1129,8 +987,7 @@ def finalizarVenta():
         f"Efectivo recibido: ${efectivo:,.2f}\n"
         f"Cambio: ${cambio:,.2f}\n"
         f"Cliente: {clienteVenta['Nombre'] if clienteVenta else 'Venta general'}\n\n"
-        "¿Deseas confirmar la venta?"
-    )
+        "¿Deseas confirmar la venta?")
 
     if not confirmar:
         return
@@ -1168,17 +1025,8 @@ def finalizarVenta():
             "Direccion": clienteVenta.get("Direccion", "")
         }
 
-    textoTicket = generarTextoTicket(
-        folio,
-        fecha,
-        articulosTicket,
-        subtotal,
-        iva,
-        total,
-        efectivo,
-        cambio,
-        clienteTicket
-    )
+    textoTicket = generarTextoTicket(folio, fecha, articulosTicket, subtotal,
+        iva, total, efectivo, cambio, clienteTicket)
 
     # Registrar la venta y actualizar la fecha de última compra del cliente.
     ventasRegistradas.append({
@@ -1201,8 +1049,7 @@ def finalizarVenta():
     #Descontar existencias solamente al confirmar
     for identificador, item in carritoVentas.items():
         producto = next(
-            p for p in productos if p["ID"] == identificador
-        )
+            p for p in productos if p["ID"] == identificador)
         producto["Cantidad"] -= item["Cantidad"]
 
     #Preparar la siguiente venta
@@ -1222,20 +1069,17 @@ def finalizarVenta():
 
 #BOTONES DE INICIO
 botonRegistrar = Button(panelFormulario, text="Registrar producto",
-    command=registrarProducto, font=("Arial", 10, "bold"),
-    bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
+    command=registrarProducto, font=("Arial", 10, "bold"), bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
     activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonRegistrar.pack(fill="x", padx=25, pady=(8, 3), ipady=4)
 
 botonGuardar = Button(panelFormulario, text="Guardar cambios",
-    command=guardarCambios, font=("Arial", 10, "bold"),
-    bg=TERRACOTA, fg=BLANCO, activebackground=CANELA,
+    command=guardarCambios, font=("Arial", 10, "bold"), bg=TERRACOTA, fg=BLANCO, activebackground=CANELA,
     activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonGuardar.pack(fill="x", padx=25, pady=3, ipady=4)
 
 botonLimpiar = Button(panelFormulario, text="Limpiar campos",
-    command=limpiarCampos, font=("Arial", 10, "bold"),
-    bg=DURAZNO, fg=CANELA, activebackground=DURAZNO_CLARO,
+    command=limpiarCampos, font=("Arial", 10, "bold"), bg=DURAZNO, fg=CANELA, activebackground=DURAZNO_CLARO,
     activeforeground=CANELA, relief="flat", cursor="hand2")
 botonLimpiar.pack(fill="x", padx=25, pady=(3, 10), ipady=4)
 
@@ -1250,27 +1094,23 @@ botonEditar = Button(panelBotonesInventario, text="Editar en Inicio",
 botonEditar.pack(side="left", padx=(0, 8), ipady=5, ipadx=8)
 
 botonEliminar = Button(panelBotonesInventario, text="Eliminar producto",
-    command=eliminarProducto, font=("Arial", 10, "bold"),
-    bg=ROJO, fg=BLANCO, activebackground="#82332B",
+    command=eliminarProducto, font=("Arial", 10, "bold"), bg=ROJO, fg=BLANCO, activebackground="#82332B",
     activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonEliminar.pack(side="left", padx=8, ipady=5, ipadx=8)
 
 #BOTONES DE VENTAS
 botonAgregarVenta = Button(panelSeleccionVenta, text="Agregar a venta",
-    command=agregarProductoVenta, font=("Arial", 9, "bold"),
-    bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
+    command=agregarProductoVenta, font=("Arial", 9, "bold"), bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
     activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonAgregarVenta.grid(row=1, column=2, padx=8, pady=(0, 5), ipady=3)
 
 botonQuitarVenta = Button(panelBotonesVenta, text="Quitar producto",
-    command=quitarProductoVenta, font=("Arial", 9, "bold"),
-    bg=DURAZNO, fg=CANELA, activebackground=DURAZNO_CLARO,
+    command=quitarProductoVenta, font=("Arial", 9, "bold"), bg=DURAZNO, fg=CANELA, activebackground=DURAZNO_CLARO,
     activeforeground=CANELA, relief="flat", cursor="hand2")
 botonQuitarVenta.pack(side="left", padx=(0, 8), ipady=4, ipadx=8)
 
 botonFinalizarVenta = Button(panelBotonesVenta, text="Finalizar venta",
-    command=finalizarVenta, font=("Arial", 9, "bold"),
-    bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
+    command=finalizarVenta, font=("Arial", 9, "bold"), bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
     activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonFinalizarVenta.pack(side="right", padx=8, ipady=4, ipadx=8)
 
@@ -1531,69 +1371,52 @@ def eliminarCliente():
 
 #PESTAÑA CLIENTES
 #Encabezado del módulo de clientes
-tituloClientes = Label(clientes, text="Gestión de clientes",
-    font=("Arial", 20, "bold"), bg=FONDO, fg=CANELA)
+tituloClientes = Label(clientes, text="Gestión de clientes", font=("Arial", 20, "bold"), bg=CONTENIDO, fg=CANELA, bd = 0, highlightthickness = 0)
 tituloClientes.pack(pady=(12, 2))
 
 mensajeClientes = Label(clientes,
-    text="Registra los datos de tus clientes y consulta sus registros.",
-    font=("Arial", 10), bg=FONDO, fg=TEXTO)
+    text="Registra los datos de tus clientes y consulta sus registros.", font=("Arial", 10), bg=CONTENIDO, fg=CANELA, bd = 0, highlightthickness = 0)
 mensajeClientes.pack(pady=(0, 10))
 
 #Panel del formulario de clientes
-panelFormularioClientes = Frame(clientes, bg=BLANCO,
-    bd=1, relief="solid")
+panelFormularioClientes = Frame(clientes, bg=BLANCO, bd=1, relief="solid")
 panelFormularioClientes.pack(fill="x", padx=15, pady=(0, 10))
 
 #Título del formulario
-tituloFormularioClientes = Label(panelFormularioClientes,
-    text="Datos del cliente", font=("Arial", 13, "bold"),
+tituloFormularioClientes = Label(panelFormularioClientes, text="Datos del cliente", font=("Arial", 13, "bold"),
     bg=BLANCO, fg=CANELA)
-tituloFormularioClientes.grid(row=0, column=0, columnspan=4,
-    sticky="w", padx=15, pady=(10, 8))
+tituloFormularioClientes.grid(row=0, column=0, columnspan=4, sticky="w", padx=15, pady=(10, 8))
 
 #ID del cliente: se asigna automáticamente al registrarlo
-Label(panelFormularioClientes, text="ID del cliente",
-    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
+Label(panelFormularioClientes, text="ID del cliente", font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
     row=1, column=0, sticky="w", padx=15, pady=(0, 3))
-cuadroIDCliente = Entry(panelFormularioClientes, font=("Arial", 10),
-    bg=DURAZNO_CLARO, fg=TEXTO, relief="solid", bd=1,
+cuadroIDCliente = Entry(panelFormularioClientes, font=("Arial", 10), bg=DURAZNO_CLARO, fg=TEXTO, relief="solid", bd=1,
     state="readonly")
 cuadroIDCliente.grid(row=2, column=0, sticky="ew", padx=15, pady=(0, 8), ipady=3)
 
 #Nombre completo del cliente
-Label(panelFormularioClientes, text="Nombre completo *",
-    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
+Label(panelFormularioClientes, text="Nombre completo *", font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
     row=1, column=1, sticky="w", padx=15, pady=(0, 3))
-cuadroNombreCliente = Entry(panelFormularioClientes, font=("Arial", 10),
-    bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
+cuadroNombreCliente = Entry(panelFormularioClientes, font=("Arial", 10), bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
 cuadroNombreCliente.grid(row=2, column=1, sticky="ew", padx=15, pady=(0, 8), ipady=3)
 
 #Teléfono del cliente
 Label(panelFormularioClientes, text="Teléfono",
-    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
-    row=1, column=2, sticky="w", padx=15, pady=(0, 3))
-cuadroTelefonoCliente = Entry(panelFormularioClientes, font=("Arial", 10),
-    bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
+    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(row=1, column=2, sticky="w", padx=15, pady=(0, 3))
+cuadroTelefonoCliente = Entry(panelFormularioClientes, font=("Arial", 10), bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
 cuadroTelefonoCliente.grid(row=2, column=2, sticky="ew", padx=15, pady=(0, 8), ipady=3)
 
 #Fecha de la última compra: se actualiza automáticamente al finalizar una venta
-Label(panelFormularioClientes, text="Fecha (última compra)",
-    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
+Label(panelFormularioClientes, text="Fecha (última compra)", font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
     row=3, column=0, sticky="w", padx=15, pady=(0, 3))
-cuadroFechaCliente = Entry(panelFormularioClientes, font=("Arial", 10),
-    bg=DURAZNO_CLARO, fg=TEXTO, relief="solid", bd=1, state="readonly")
-cuadroFechaCliente.grid(row=4, column=0, columnspan=2,
-    sticky="ew", padx=15, pady=(0, 12), ipady=3)
+cuadroFechaCliente = Entry(panelFormularioClientes, font=("Arial", 10), bg=DURAZNO_CLARO, fg=TEXTO, relief="solid", bd=1, state="readonly")
+cuadroFechaCliente.grid(row=4, column=0, columnspan=2, sticky="ew", padx=15, pady=(0, 12), ipady=3)
 
 #Dirección del cliente (obligatoria)
-Label(panelFormularioClientes, text="Dirección *",
-    font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
+Label(panelFormularioClientes, text="Dirección *", font=("Arial", 9, "bold"), bg=BLANCO, fg=TEXTO).grid(
     row=3, column=2, sticky="w", padx=15, pady=(0, 3))
-cuadroDireccionCliente = Entry(panelFormularioClientes, font=("Arial", 10),
-    bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
-cuadroDireccionCliente.grid(row=4, column=2, columnspan=2,
-    sticky="ew", padx=15, pady=(0, 12), ipady=3)
+cuadroDireccionCliente = Entry(panelFormularioClientes, font=("Arial", 10), bg=BLANCO, fg=TEXTO, relief="solid", bd=1)
+cuadroDireccionCliente.grid(row=4, column=2, columnspan=2, sticky="ew", padx=15, pady=(0, 12), ipady=3)
 
 #Permitir que las columnas del formulario se adapten al tamaño de la ventana
 for columnaCliente in range(4):
@@ -1603,41 +1426,34 @@ for columnaCliente in range(4):
 panelBotonesClientes = Frame(clientes, bg=FONDO)
 panelBotonesClientes.pack(fill="x", padx=15, pady=(0, 10))
 
-botonRegistrarCliente = Button(panelBotonesClientes, text="Registrar cliente",
-    command=registrarCliente, font=("Arial", 10, "bold"),
-    bg=CANELA, fg=BLANCO, activebackground=TERRACOTA,
-    activeforeground=BLANCO, relief="flat", cursor="hand2")
+botonRegistrarCliente = Button(panelBotonesClientes, text="Registrar cliente", command=registrarCliente, font=("Arial", 10, "bold"),
+    bg=CANELA, fg=BLANCO, activebackground=TERRACOTA, activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonRegistrarCliente.pack(side="left", padx=(0, 8), ipady=5, ipadx=10)
 
 botonGuardarCambiosCliente = Button(panelBotonesClientes, text="Guardar cambios",
-    command=guardarCambiosCliente, font=("Arial", 10, "bold"),
-    bg=TERRACOTA, fg=BLANCO, activebackground=CANELA,
+    command=guardarCambiosCliente, font=("Arial", 10, "bold"), bg=TERRACOTA, fg=BLANCO, activebackground=CANELA,
     activeforeground=BLANCO, relief="flat", cursor="hand2", state="disabled")
 botonGuardarCambiosCliente.pack(side="left", padx=8, ipady=5, ipadx=10)
 
 botonEliminarCliente = Button(panelBotonesClientes, text="Eliminar cliente",
-    command=eliminarCliente, font=("Arial", 10, "bold"),
-    bg=ROJO, fg=BLANCO, activebackground="#82332B",
+    command=eliminarCliente, font=("Arial", 10, "bold"), bg=ROJO, fg=BLANCO, activebackground="#82332B",
     activeforeground=BLANCO, relief="flat", cursor="hand2")
 botonEliminarCliente.pack(side="left", padx=8, ipady=5, ipadx=10)
 
 botonLimpiarCliente = Button(panelBotonesClientes, text="Limpiar campos",
-    command=limpiarCamposCliente, font=("Arial", 10, "bold"),
-    bg=DURAZNO, fg=CANELA, activebackground=DURAZNO_CLARO,
+    command=limpiarCamposCliente, font=("Arial", 10, "bold"), bg=DURAZNO, fg=CANELA, activebackground=DURAZNO_CLARO,
     activeforeground=CANELA, relief="flat", cursor="hand2")
 botonLimpiarCliente.pack(side="right", padx=(8, 0), ipady=5, ipadx=10)
 
 #Panel de la tabla de clientes
-tituloTablaClientes = Label(clientes, text="Clientes registrados",
-    font=("Arial", 13, "bold"), bg=FONDO, fg=CANELA)
+tituloTablaClientes = Label(clientes, text="Clientes registrados", font=("Arial", 13, "bold"), bg=CONTENIDO, fg=CANELA, bd = 0, highlightthickness = 0)
 tituloTablaClientes.pack(anchor="w", padx=18, pady=(0, 5))
 
 panelTablaClientes = Frame(clientes, bg=FONDO)
 panelTablaClientes.pack(fill="both", expand=True, padx=15, pady=(0, 12))
 
 columnasClientes = ("ID", "Nombre completo", "Teléfono", "Fecha", "Dirección")
-tablaClientes = ttk.Treeview(panelTablaClientes,
-    columns=columnasClientes, show="headings", selectmode="browse")
+tablaClientes = ttk.Treeview(panelTablaClientes, columns=columnasClientes, show="headings", selectmode="browse")
 
 anchosClientes = {
     "ID": 65,
@@ -1655,12 +1471,9 @@ for columnaCliente in columnasClientes:
 tablaClientes.tag_configure("cliente_claro", background=BLANCO, foreground=TEXTO)
 tablaClientes.tag_configure("cliente_otonial", background=DURAZNO_CLARO, foreground=TEXTO)
 
-barraVerticalClientes = ttk.Scrollbar(panelTablaClientes,
-    orient="vertical", command=tablaClientes.yview)
-barraHorizontalClientes = ttk.Scrollbar(panelTablaClientes,
-    orient="horizontal", command=tablaClientes.xview)
-tablaClientes.configure(
-    yscrollcommand=barraVerticalClientes.set,
+barraVerticalClientes = ttk.Scrollbar(panelTablaClientes, orient="vertical", command=tablaClientes.yview)
+barraHorizontalClientes = ttk.Scrollbar(panelTablaClientes, orient="horizontal", command=tablaClientes.xview)
+tablaClientes.configure(yscrollcommand=barraVerticalClientes.set,
     xscrollcommand=barraHorizontalClientes.set)
 
 tablaClientes.grid(row=0, column=0, sticky="nsew")
@@ -1726,8 +1539,7 @@ def iniciarSesion(event=None):
         entradaContrasena.focus_set()
 
 Button(ventanaLogin, text="Iniciar sesión", command=iniciarSesion,
-       font=("Arial", 10, "bold"), bg=CANELA, fg=BLANCO,
-       activebackground=TERRACOTA, activeforeground=BLANCO,
+       font=("Arial", 10, "bold"), bg=CANELA, fg=BLANCO, activebackground=TERRACOTA, activeforeground=BLANCO,
        relief="flat", cursor="hand2").pack(fill="x", padx=45, ipady=6)
 
 entradaUsuario.focus_set()
