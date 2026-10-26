@@ -1,0 +1,46 @@
+==============================================
+                 JOHN'S FRESH                 
+               TICKET DE VENTA                
+==============================================
+Folio: 0001
+Fecha: 26/10/2026 00:08:17
+Cliente: José María
+ID de cliente: 8
+Teléfono: 8871236574
+Dirección: Av. San Bernado, Tlahuelilpan
+----------------------------------------------
+PRODUCTOS
+----------------------------------------------
+Frijol negro
+  14 Kilogramos x $38.00
+  Importe: $532.00
+Yogur
+  3 Piezas x $18.00
+  Importe: $54.00
+Manzana
+  1 Kilogramos x $42.00
+  Importe: $42.00
+Galletas
+  3 Paquetes x $17.00
+  Importe: $51.00
+Huevo
+  12 Docenas x $48.00
+  Importe: $576.00
+Esponja para trastes
+  5 Piezas x $15.00
+  Importe: $75.00
+Leche
+  10 Litros x $19.00
+  Importe: $190.00
+----------------------------------------------
+Subtotal:                   $       1,520.00
+IVA (16 %):                 $         243.20
+==============================================
+TOTAL:                      $       1,763.20
+==============================================
+Efectivo recibido:          $       5,000.00
+Cambio:                     $       3,236.80
+==============================================
+           ¡Gracias por comprar en            
+                John's Fresh!                 
+==============================================
